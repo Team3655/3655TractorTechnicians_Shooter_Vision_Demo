@@ -62,21 +62,7 @@ public class RobotContainer {
 
 		autoBuilder.populatePathMap();
 
-		autoChooser.addOption("Event Test", autoBuilder.getPathCommand("Event Test"));
 		autoChooser.addOption("Square", autoBuilder.getPathCommand("Square"));
-		autoChooser.addOption("Target Cube Test", autoBuilder.getPathCommand("Cube Target Test"));
-
-		autoChooser.addOption("1 Human Player", autoBuilder.getPathCommand("1 Human Player"));
-		autoChooser.addOption("1 Wall", autoBuilder.getPathCommand("1 Wall"));
-		autoChooser.addOption("1+1 Human Player", autoBuilder.getPathCommand("1+1 Human Player"));
-		autoChooser.addOption("1+2 Human Player", autoBuilder.getPathCommand("1+2 Human Player"));
-		autoChooser.addOption("1+1.5 Human Player", autoBuilder.getPathCommand("1+1.5 Human Player"));
-
-		autoChooser.addOption("1 Charge Mobility",
-				autoBuilder.getPathCommand("1 Charge Mobility").andThen(new BalanceCommand()));
-		autoChooser.addOption("1 Charge",
-				autoBuilder.getPathCommand("1 Charge").andThen(new BalanceCommand()));
-
 		// endregion
 	}
 
