@@ -92,10 +92,10 @@ public final class Constants {
 		public static final double kWheelBase = Units.inchesToMeters(20); // in meters!
 
 		public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
-				new Translation2d(kWheelBase / 2, kTrackWidth / 2)); // FL
-				// new Translation2d(kWheelBase / 2, -kTrackWidth / 2), // FR
-				// new Translation2d(-kWheelBase / 2, kTrackWidth / 2), // RL
-				// new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)); // RR
+				new Translation2d(kWheelBase / 2, kTrackWidth / 2), // FL
+				new Translation2d(kWheelBase / 2, -kTrackWidth / 2), // FR
+				new Translation2d(-kWheelBase / 2, kTrackWidth / 2), // RL
+				new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)); // RR
 
 		public static final boolean kGyroReversed = true;
 		public static final boolean kFeildCentric = true;
