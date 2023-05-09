@@ -103,7 +103,7 @@ public class DriveSubsystem extends SubsystemBase {
 				rearRight.getPosition()
 		};
 
-		gyro = new WPI_Pigeon2(DriveConstants.kPigeonPort, Constants.kCanivoreCANBusName);
+		gyro = new WPI_Pigeon2(DriveConstants.kPigeonPort, Constants.kDriveCANBusName);
 		gyro.setYaw(0);
 
 		odometry = new SwerveDriveOdometry(
@@ -267,9 +267,9 @@ public class DriveSubsystem extends SubsystemBase {
 		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, ModuleConstants.kMaxModuleSpeedMetersPerSecond);
 
 		frontLeft.setDesiredState(desiredStates[0]);
-		frontRight.setDesiredState(desiredStates[1]);
-		rearLeft.setDesiredState(desiredStates[2]);
-		rearRight.setDesiredState(desiredStates[3]);
+		// frontRight.setDesiredState(desiredStates[1]);
+		// rearLeft.setDesiredState(desiredStates[2]);
+		// rearRight.setDesiredState(desiredStates[3]);
 	}
 
 	public void updateOdometry() {
