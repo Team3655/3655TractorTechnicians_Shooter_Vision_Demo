@@ -29,7 +29,7 @@ import frc.robot.Constants;
 import frc.robot.Mechanisms.SwerveModule;
 import frc.robot.TractorToolbox.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.GenericModuleConstants;
+import frc.robot.Constants.BaseModuleConstants;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -62,39 +62,39 @@ public class DriveSubsystem extends SubsystemBase {
 
 		frontLeft = new SwerveModule(
 				"FL",
-				GenericModuleConstants.kPrimaryFrontLeftDriveMotorPort,
-				GenericModuleConstants.kFrontLeftTurningMotorPort,
-				GenericModuleConstants.kFrontLeftTurningEncoderPort,
-				GenericModuleConstants.kFrontLeftAngleZero,
-				GenericModuleConstants.kModuleTurningGains,
-				GenericModuleConstants.kModuleDriveGains);
+				BaseModuleConstants.kPrimaryFrontLeftDriveMotorPort,
+				BaseModuleConstants.kFrontLeftTurningMotorPort,
+				BaseModuleConstants.kFrontLeftTurningEncoderPort,
+				BaseModuleConstants.kFrontLeftAngleZero,
+				BaseModuleConstants.kModuleTurningGains,
+				BaseModuleConstants.kModuleDriveGains);
 
 		frontRight = new SwerveModule(
 				"FR",
-				GenericModuleConstants.kPrimaryFrontRightDriveMotorPort,
-				GenericModuleConstants.kFrontRightTurningMotorPort,
-				GenericModuleConstants.kFrontRightTurningEncoderPort,
-				GenericModuleConstants.kFrontRightAngleZero,
-				GenericModuleConstants.kModuleTurningGains,
-				GenericModuleConstants.kModuleDriveGains);
+				BaseModuleConstants.kPrimaryFrontRightDriveMotorPort,
+				BaseModuleConstants.kFrontRightTurningMotorPort,
+				BaseModuleConstants.kFrontRightTurningEncoderPort,
+				BaseModuleConstants.kFrontRightAngleZero,
+				BaseModuleConstants.kModuleTurningGains,
+				BaseModuleConstants.kModuleDriveGains);
 
 		rearLeft = new SwerveModule(
 				"RL",
-				GenericModuleConstants.kPrimaryRearLeftDriveMotorPort,
-				GenericModuleConstants.kRearLeftTurningMotorPort,
-				GenericModuleConstants.kRearLeftTurningEncoderPort,
-				GenericModuleConstants.kRearLeftAngleZero,
-				GenericModuleConstants.kModuleTurningGains,
-				GenericModuleConstants.kModuleDriveGains);
+				BaseModuleConstants.kPrimaryRearLeftDriveMotorPort,
+				BaseModuleConstants.kRearLeftTurningMotorPort,
+				BaseModuleConstants.kRearLeftTurningEncoderPort,
+				BaseModuleConstants.kRearLeftAngleZero,
+				BaseModuleConstants.kModuleTurningGains,
+				BaseModuleConstants.kModuleDriveGains);
 
 		rearRight = new SwerveModule(
 				"RR",
-				GenericModuleConstants.kPrimaryRearRightDriveMotorPort,
-				GenericModuleConstants.kRearRightTurningMotorPort,
-				GenericModuleConstants.kRearRightTurningEncoderPort,
-				GenericModuleConstants.kRearRightAngleZero,
-				GenericModuleConstants.kModuleTurningGains,
-				GenericModuleConstants.kModuleDriveGains);
+				BaseModuleConstants.kPrimaryRearRightDriveMotorPort,
+				BaseModuleConstants.kRearRightTurningMotorPort,
+				BaseModuleConstants.kRearRightTurningEncoderPort,
+				BaseModuleConstants.kRearRightAngleZero,
+				BaseModuleConstants.kModuleTurningGains,
+				BaseModuleConstants.kModuleDriveGains);
 
 		swervePosition = new SwerveModulePosition[] {
 				frontLeft.getPosition(),
@@ -151,10 +151,10 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("RL Absolute", rearLeft.getAbsoluteHeading());
 		SmartDashboard.putNumber("RR Absolute", rearRight.getAbsoluteHeading());
 
-		SmartDashboard.putNumber("FL Offset Check", frontLeft.getAbsoluteHeading() + frontLeft.angleZero);
-		SmartDashboard.putNumber("FR Offset Check", frontRight.getAbsoluteHeading() + frontRight.angleZero);
-		SmartDashboard.putNumber("RL Offset Check", rearLeft.getAbsoluteHeading() + rearLeft.angleZero);
-		SmartDashboard.putNumber("RR Offset Check", rearRight.getAbsoluteHeading() + rearRight.angleZero);
+		SmartDashboard.putNumber("FL Offset Check", frontLeft.getAbsoluteHeading() + frontLeft.angleZeroOffset);
+		SmartDashboard.putNumber("FR Offset Check", frontRight.getAbsoluteHeading() + frontRight.angleZeroOffset);
+		SmartDashboard.putNumber("RL Offset Check", rearLeft.getAbsoluteHeading() + rearLeft.angleZeroOffset);
+		SmartDashboard.putNumber("RR Offset Check", rearRight.getAbsoluteHeading() + rearRight.angleZeroOffset);
 
 		SmartDashboard.putNumber("Gyro yaw", gyro.getYaw());
 		SmartDashboard.putNumber("Gyro pitch", gyro.getPitch());
@@ -264,7 +264,7 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void setModuleStates(SwerveModuleState[] desiredStates) {
-		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, GenericModuleConstants.kMaxModuleSpeedMetersPerSecond);
+		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, BaseModuleConstants.kMaxModuleSpeedMetersPerSecond);
 
 		frontLeft.setDesiredState(desiredStates[0]);
 		frontRight.setDesiredState(desiredStates[1]);
@@ -297,10 +297,10 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void resetEncoders() {
-		frontLeft.resetEncoders();
-		rearLeft.resetEncoders();
-		frontRight.resetEncoders();
-		rearRight.resetEncoders();
+		frontLeft.resetAbsoluteEncoder();
+		rearLeft.resetAbsoluteEncoder();
+		frontRight.resetAbsoluteEncoder();
+		rearRight.resetAbsoluteEncoder();
 	}
 
 	public void zeroHeading() {

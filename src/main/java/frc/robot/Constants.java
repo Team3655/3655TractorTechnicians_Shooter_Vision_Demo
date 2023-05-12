@@ -24,7 +24,7 @@ import frc.robot.commands.Limelight.LLAlignCommand;
  */
 public final class Constants {
 
-	public static class GenericModuleConstants {
+	public static class BaseModuleConstants {
 
 		// Current limits for the wheels
 		public static final int kTurnMotorCurrentLimit = 25;
@@ -70,14 +70,14 @@ public final class Constants {
 		public static final int kRearRightTurningEncoderPort = 12;
 
 		// Offset angle for absolute encoders (find this using CTRE client)
-		public static final double kFrontLeftAngleZero = 39.55;
+		public static final double kFrontLeftAngleZero = 0;
 		public static final double kFrontRightAngleZero = 121.641;
 		public static final double kRearLeftAngleZero = 152.2;
 		public static final double kRearRightAngleZero = 60.47;
 
 		public static final PIDGains kModuleDriveGains = new PIDGains(.1, 0, 0);
 
-		public static final PIDGains kModuleTurningGains = new PIDGains(6.5, .25, .15);
+		public static final PIDGains kModuleTurningGains = new PIDGains(1, 0, 0);
 	}
 
 	public static class DriveConstants {

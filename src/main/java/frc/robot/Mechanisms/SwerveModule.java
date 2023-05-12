@@ -8,23 +8,21 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.Constants.GenericModuleConstants;
+import frc.robot.Constants.BaseModuleConstants;
 import frc.robot.TractorToolbox.TractorParts.PIDGains;
 
 public class SwerveModule {
@@ -40,26 +38,22 @@ public class SwerveModule {
 
 	private final SparkMaxPIDController drivePID;
 	private final SparkMaxPIDController turnPID;
-	// private final ProfiledPIDController m_turningPIDController;
 
-	public final double angleZero;
+	public final double angleZeroOffset;
 
 	private final String moduleName;
-
-	SimpleMotorFeedforward turnFeedForward = new SimpleMotorFeedforward(
-			GenericModuleConstants.ksTurning, GenericModuleConstants.kvTurning);
 
 	public SwerveModule(
 			String moduleName,
 			int driveMotorChannel,
 			int turningMotorChannel,
 			int absoluteEncoderPort,
-			double angleZero,
+			double angleZeroOffset,
 			PIDGains angularPIDGains,
 			PIDGains drivePIDGains) {
 
 		this.moduleName = moduleName;
-		this.angleZero = angleZero;
+		this.angleZeroOffset = angleZeroOffset;
 
 		// Initialize the motors
 		driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
@@ -72,7 +66,6 @@ public class SwerveModule {
 		driveMotor.restoreFactoryDefaults();
 
 		turnMotor.setInverted(true);
-		// driveMotor.setInverted(true);
 
 		// Initalize CANcoder
 		absoluteEncoder = new CANCoder(absoluteEncoderPort, Constants.kDriveCANBusName);
@@ -80,21 +73,21 @@ public class SwerveModule {
 		absoluteEncoder.configFactoryDefault();
 		absoluteEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
 		absoluteEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
-		//absoluteEncoder.configMagnetOffset(-1 * angleZero);
 		absoluteEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10, 100);
 		absoluteEncoder.clearStickyFaults();
 
 		driveEncoder = driveMotor.getEncoder();
-		driveEncoder.setPositionConversionFactor(GenericModuleConstants.kdriveGearRatio * GenericModuleConstants.kwheelCircumference); // meters
+		driveEncoder.setPositionConversionFactor(
+				BaseModuleConstants.kdriveGearRatio * BaseModuleConstants.kwheelCircumference); // meters
 		driveEncoder.setVelocityConversionFactor(
-				GenericModuleConstants.kdriveGearRatio
-						* GenericModuleConstants.kwheelCircumference
+				BaseModuleConstants.kdriveGearRatio
+						* BaseModuleConstants.kwheelCircumference
 						* (1d / 60d)); // meters per second
 
 		turnEncoder = turnMotor.getEncoder();
-		turnEncoder.setPositionConversionFactor((2 * Math.PI) * GenericModuleConstants.kturnGearRatio);
-		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * GenericModuleConstants.kturnGearRatio * (1d / 60d));
-		turnEncoder.setPosition(Units.degreesToRadians(absoluteEncoder.getAbsolutePosition() - angleZero));
+		turnEncoder.setPositionConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio);
+		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio * (1d / 60d));
+		turnEncoder.setPosition(Units.degreesToRadians(absoluteEncoder.getAbsolutePosition() - angleZeroOffset));
 
 		// Initialize PID's
 		drivePID = driveMotor.getPIDController();
@@ -107,37 +100,30 @@ public class SwerveModule {
 		turnPID.setI(angularPIDGains.kI);
 		turnPID.setD(angularPIDGains.kD);
 
-		// m_turningPIDController = new ProfiledPIDController(
-		// angularPID.kP,
-		// angularPID.kI,
-		// angularPID.kD,
-		// new TrapezoidProfile.Constraints( // radians/s?
-		// 2 * Math.PI * 600, // theoretical is 5676 RPM -> 94*2pi
-		// 2 * Math.PI * 1200));
-
-		this.drivePID.setFF(GenericModuleConstants.kDriveFeedForward);
-
-		this.drivePID.setFeedbackDevice(driveMotor.getEncoder());
-
-		this.drivePID.setOutputRange(-1, 1);
+		drivePID.setFF(BaseModuleConstants.kDriveFeedForward);
 
 		// Configure current limits for motors
 		driveMotor.setIdleMode(IdleMode.kBrake);
 		turnMotor.setIdleMode(IdleMode.kBrake);
-		turnMotor.setSmartCurrentLimit(GenericModuleConstants.kTurnMotorCurrentLimit);
-		driveMotor.setSmartCurrentLimit(GenericModuleConstants.kDriveMotorCurrentLimit);
+		turnMotor.setSmartCurrentLimit(BaseModuleConstants.kTurnMotorCurrentLimit);
+		driveMotor.setSmartCurrentLimit(BaseModuleConstants.kDriveMotorCurrentLimit);
 
 		turnPID.setPositionPIDWrappingEnabled(true);
 		turnPID.setPositionPIDWrappingMinInput(-Math.PI);
 		turnPID.setPositionPIDWrappingMaxInput(Math.PI);
 
-		SmartDashboard.putNumber(this.moduleName + " Offset", angleZero);
+		SmartDashboard.putNumber(this.moduleName + " Offset", angleZeroOffset);
 		SmartDashboard.putString(this.moduleName + " Abs. Status", absoluteEncoder.getLastError().toString());
 	}
 
 	// Returns headings of the module
+
+	public double getHeading() {
+		return turnEncoder.getPosition();
+	}
+
 	public double getAbsoluteHeading() {
-		return absoluteEncoder.getAbsolutePosition();
+		return absoluteEncoder.getAbsolutePosition() - angleZeroOffset;
 	}
 
 	public double getDistanceMeters() {
@@ -154,30 +140,30 @@ public class SwerveModule {
 		return new SwerveModulePosition(distanceMeters, new Rotation2d(moduleAngleRadians));
 	}
 
+	// region: Setters
+
 	public void setDesiredState(SwerveModuleState desiredState) {
+		setDesiredState(desiredState, false);
+	}
 
-		double moduleAngleRadians = Math.toRadians(absoluteEncoder.getAbsolutePosition());
+	public void setDesiredState(SwerveModuleState desiredState, boolean isTurbo) {
 
-		// Optimize the reference state to avoid spinning further than 90 degrees to
+		double moduleAngleRadians = turnEncoder.getPosition();
+
+		// Optimize the reference state to avoid spinning further than 90 degrees to the
 		// desired state
 		SwerveModuleState optimizedState = SwerveModuleState.optimize(
 				desiredState,
 				new Rotation2d(moduleAngleRadians));
 
-		// final var angularPIDOutput =
-		// m_turningPIDController.calculate(moduleAngleRadians,
-		// optimizedState.angle.getRadians());
+		if (isTurbo) {
+			driveMotor.set(Math.signum(optimizedState.speedMetersPerSecond));
 
-		// final var angularFFOutput =
-		// turnFeedForward.calculate(m_turningPIDController.getSetpoint().velocity);
-
-		// final var turnOutput = angularPIDOutput + angularFFOutput;
-
-		// turnMotor.setVoltage(turnOutput);
-
-		drivePID.setReference(
-				optimizedState.speedMetersPerSecond,
-				ControlType.kVelocity);
+		} else {
+			drivePID.setReference(
+					optimizedState.speedMetersPerSecond,
+					ControlType.kVelocity);
+		}
 
 		turnPID.setReference(
 				optimizedState.angle.getRadians(),
@@ -185,20 +171,14 @@ public class SwerveModule {
 
 		SmartDashboard.putNumber(this.moduleName + " Optimized Angle", optimizedState.angle.getDegrees());
 		SmartDashboard.putNumber(this.moduleName + " Turn Motor Output", turnMotor.getAppliedOutput());
-		// SmartDashboard.putNumber(this.moduleName + " Turn Output", turnOutput);
-
+		SmartDashboard.putNumber(this.moduleName + " SparkEncoder Angle",
+				Units.radiansToDegrees(turnEncoder.getPosition()));
 	}
 
-	public void resetEncoders() {
-		Timer.delay(.1);
+	public void resetAbsoluteEncoder() {
 		absoluteEncoder.configFactoryDefault();
-		Timer.delay(.1);
 		absoluteEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
-		Timer.delay(.1);
 		absoluteEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
-		Timer.delay(.1);
-		absoluteEncoder.configMagnetOffset(-1 * angleZero);
-		Timer.delay(.1);
 		absoluteEncoder.clearStickyFaults();
 	}
 
@@ -206,5 +186,7 @@ public class SwerveModule {
 		driveMotor.stopMotor();
 		turnMotor.stopMotor();
 	}
+
+	// endregion: setters
 
 }

@@ -60,9 +60,9 @@ public class RobotContainer {
 		// region Def Auto
 		Shuffleboard.getTab("Driver").add(autoChooser);
 
-		// autoBuilder.populatePathMap();
+		autoBuilder.populatePathMap();
 
-		// autoChooser.addOption("Square", autoBuilder.getPathCommand("Square"));
+		autoChooser.addOption("Square", autoBuilder.getPathCommand("Square"));
 		// endregion
 	}
 
@@ -107,9 +107,9 @@ public class RobotContainer {
 				new RunCommand(
 						() -> driveSubsystem.drive(
 								-JoystickUtils.processJoystickInput(driveJoystick.getY())
-										- JoystickUtils.processJoystickInput(programmerController.getLeftY()), // x axis
+										- programmerController.getLeftY(), // x axis
 								-JoystickUtils.processJoystickInput(driveJoystick.getX())
-										- JoystickUtils.processJoystickInput(programmerController.getLeftX()), // y axis
+										- programmerController.getLeftX(), // y axis
 								-JoystickUtils.processJoystickInput(turnJoystick.getX())
 										- JoystickUtils.processJoystickInput(programmerController.getRightX()), // rot
 																												// axis
