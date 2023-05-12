@@ -24,7 +24,7 @@ import frc.robot.commands.Limelight.LLAlignCommand;
  */
 public final class Constants {
 
-	public static class ModuleConstants {
+	public static class GenericModuleConstants {
 
 		// Current limits for the wheels
 		public static final int kTurnMotorCurrentLimit = 25;
@@ -47,10 +47,15 @@ public final class Constants {
 		public static final double ksTurning = .17161; // Tuned February 2, 2023
 
 		// NEO drive motor CAN ID's
-		public static final int kFrontLeftDriveMotorPort = 1;
-		public static final int kFrontRightDriveMotorPort = 2;
-		public static final int kRearLeftDriveMotorPort = 3;
-		public static final int kRearRightDriveMotorPort = 4;
+		public static final int kPrimaryFrontLeftDriveMotorPort = 1;
+		public static final int kPrimaryFrontRightDriveMotorPort = 2;
+		public static final int kPrimaryRearLeftDriveMotorPort = 3;
+		public static final int kPrimaryRearRightDriveMotorPort = 4;
+		
+		public static final int kSecondaryFrontLeftDriveMotorPort = 13;
+		public static final int kSecondaryFrontRightDriveMotorPort = 14;
+		public static final int kSecondaryRearLeftDriveMotorPort = 15;
+		public static final int kSecondaryRearRightDriveMotorPort = 16;
 
 		// NEO turning motor CAN ID's
 		public static final int kFrontLeftTurningMotorPort = 5;

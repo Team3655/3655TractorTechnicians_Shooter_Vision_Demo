@@ -29,7 +29,7 @@ import frc.robot.Constants;
 import frc.robot.Mechanisms.SwerveModule;
 import frc.robot.TractorToolbox.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.ModuleConstants;
+import frc.robot.Constants.GenericModuleConstants;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -62,39 +62,39 @@ public class DriveSubsystem extends SubsystemBase {
 
 		frontLeft = new SwerveModule(
 				"FL",
-				ModuleConstants.kFrontLeftDriveMotorPort,
-				ModuleConstants.kFrontLeftTurningMotorPort,
-				ModuleConstants.kFrontLeftTurningEncoderPort,
-				ModuleConstants.kFrontLeftAngleZero,
-				ModuleConstants.kModuleTurningGains,
-				ModuleConstants.kModuleDriveGains);
+				GenericModuleConstants.kPrimaryFrontLeftDriveMotorPort,
+				GenericModuleConstants.kFrontLeftTurningMotorPort,
+				GenericModuleConstants.kFrontLeftTurningEncoderPort,
+				GenericModuleConstants.kFrontLeftAngleZero,
+				GenericModuleConstants.kModuleTurningGains,
+				GenericModuleConstants.kModuleDriveGains);
 
 		frontRight = new SwerveModule(
 				"FR",
-				ModuleConstants.kFrontRightDriveMotorPort,
-				ModuleConstants.kFrontRightTurningMotorPort,
-				ModuleConstants.kFrontRightTurningEncoderPort,
-				ModuleConstants.kFrontRightAngleZero,
-				ModuleConstants.kModuleTurningGains,
-				ModuleConstants.kModuleDriveGains);
+				GenericModuleConstants.kPrimaryFrontRightDriveMotorPort,
+				GenericModuleConstants.kFrontRightTurningMotorPort,
+				GenericModuleConstants.kFrontRightTurningEncoderPort,
+				GenericModuleConstants.kFrontRightAngleZero,
+				GenericModuleConstants.kModuleTurningGains,
+				GenericModuleConstants.kModuleDriveGains);
 
 		rearLeft = new SwerveModule(
 				"RL",
-				ModuleConstants.kRearLeftDriveMotorPort,
-				ModuleConstants.kRearLeftTurningMotorPort,
-				ModuleConstants.kRearLeftTurningEncoderPort,
-				ModuleConstants.kRearLeftAngleZero,
-				ModuleConstants.kModuleTurningGains,
-				ModuleConstants.kModuleDriveGains);
+				GenericModuleConstants.kPrimaryRearLeftDriveMotorPort,
+				GenericModuleConstants.kRearLeftTurningMotorPort,
+				GenericModuleConstants.kRearLeftTurningEncoderPort,
+				GenericModuleConstants.kRearLeftAngleZero,
+				GenericModuleConstants.kModuleTurningGains,
+				GenericModuleConstants.kModuleDriveGains);
 
 		rearRight = new SwerveModule(
 				"RR",
-				ModuleConstants.kRearRightDriveMotorPort,
-				ModuleConstants.kRearRightTurningMotorPort,
-				ModuleConstants.kRearRightTurningEncoderPort,
-				ModuleConstants.kRearRightAngleZero,
-				ModuleConstants.kModuleTurningGains,
-				ModuleConstants.kModuleDriveGains);
+				GenericModuleConstants.kPrimaryRearRightDriveMotorPort,
+				GenericModuleConstants.kRearRightTurningMotorPort,
+				GenericModuleConstants.kRearRightTurningEncoderPort,
+				GenericModuleConstants.kRearRightAngleZero,
+				GenericModuleConstants.kModuleTurningGains,
+				GenericModuleConstants.kModuleDriveGains);
 
 		swervePosition = new SwerveModulePosition[] {
 				frontLeft.getPosition(),
@@ -264,12 +264,12 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void setModuleStates(SwerveModuleState[] desiredStates) {
-		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, ModuleConstants.kMaxModuleSpeedMetersPerSecond);
+		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, GenericModuleConstants.kMaxModuleSpeedMetersPerSecond);
 
 		frontLeft.setDesiredState(desiredStates[0]);
-		// frontRight.setDesiredState(desiredStates[1]);
-		// rearLeft.setDesiredState(desiredStates[2]);
-		// rearRight.setDesiredState(desiredStates[3]);
+		frontRight.setDesiredState(desiredStates[1]);
+		rearLeft.setDesiredState(desiredStates[2]);
+		rearRight.setDesiredState(desiredStates[3]);
 	}
 
 	public void updateOdometry() {

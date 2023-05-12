@@ -60,9 +60,9 @@ public class RobotContainer {
 		// region Def Auto
 		Shuffleboard.getTab("Driver").add(autoChooser);
 
-		autoBuilder.populatePathMap();
+		// autoBuilder.populatePathMap();
 
-		autoChooser.addOption("Square", autoBuilder.getPathCommand("Square"));
+		// autoChooser.addOption("Square", autoBuilder.getPathCommand("Square"));
 		// endregion
 	}
 

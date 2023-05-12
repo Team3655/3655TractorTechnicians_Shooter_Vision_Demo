@@ -24,7 +24,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
-import frc.robot.Constants.ModuleConstants;
+import frc.robot.Constants.GenericModuleConstants;
 import frc.robot.TractorToolbox.TractorParts.PIDGains;
 
 public class SwerveModule {
@@ -47,7 +47,7 @@ public class SwerveModule {
 	private final String moduleName;
 
 	SimpleMotorFeedforward turnFeedForward = new SimpleMotorFeedforward(
-			ModuleConstants.ksTurning, ModuleConstants.kvTurning);
+			GenericModuleConstants.ksTurning, GenericModuleConstants.kvTurning);
 
 	public SwerveModule(
 			String moduleName,
@@ -85,15 +85,15 @@ public class SwerveModule {
 		absoluteEncoder.clearStickyFaults();
 
 		driveEncoder = driveMotor.getEncoder();
-		driveEncoder.setPositionConversionFactor(ModuleConstants.kdriveGearRatio * ModuleConstants.kwheelCircumference); // meters
+		driveEncoder.setPositionConversionFactor(GenericModuleConstants.kdriveGearRatio * GenericModuleConstants.kwheelCircumference); // meters
 		driveEncoder.setVelocityConversionFactor(
-				ModuleConstants.kdriveGearRatio
-						* ModuleConstants.kwheelCircumference
+				GenericModuleConstants.kdriveGearRatio
+						* GenericModuleConstants.kwheelCircumference
 						* (1d / 60d)); // meters per second
 
 		turnEncoder = turnMotor.getEncoder();
-		turnEncoder.setPositionConversionFactor((2 * Math.PI) * ModuleConstants.kturnGearRatio);
-		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * ModuleConstants.kturnGearRatio * (1d / 60d));
+		turnEncoder.setPositionConversionFactor((2 * Math.PI) * GenericModuleConstants.kturnGearRatio);
+		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * GenericModuleConstants.kturnGearRatio * (1d / 60d));
 		turnEncoder.setPosition(Units.degreesToRadians(absoluteEncoder.getAbsolutePosition() - angleZero));
 
 		// Initialize PID's
@@ -115,7 +115,7 @@ public class SwerveModule {
 		// 2 * Math.PI * 600, // theoretical is 5676 RPM -> 94*2pi
 		// 2 * Math.PI * 1200));
 
-		this.drivePID.setFF(ModuleConstants.kDriveFeedForward);
+		this.drivePID.setFF(GenericModuleConstants.kDriveFeedForward);
 
 		this.drivePID.setFeedbackDevice(driveMotor.getEncoder());
 
@@ -124,8 +124,8 @@ public class SwerveModule {
 		// Configure current limits for motors
 		driveMotor.setIdleMode(IdleMode.kBrake);
 		turnMotor.setIdleMode(IdleMode.kBrake);
-		turnMotor.setSmartCurrentLimit(ModuleConstants.kTurnMotorCurrentLimit);
-		driveMotor.setSmartCurrentLimit(ModuleConstants.kDriveMotorCurrentLimit);
+		turnMotor.setSmartCurrentLimit(GenericModuleConstants.kTurnMotorCurrentLimit);
+		driveMotor.setSmartCurrentLimit(GenericModuleConstants.kDriveMotorCurrentLimit);
 
 		turnPID.setPositionPIDWrappingEnabled(true);
 		turnPID.setPositionPIDWrappingMinInput(-Math.PI);
