@@ -71,12 +71,12 @@ public final class Constants {
 
 		// Offset angle for absolute encoders (find this using CTRE client)
 		public static final double kFrontLeftAngleZero = 0;
-		public static final double kFrontRightAngleZero = 121.641;
-		public static final double kRearLeftAngleZero = 152.2;
-		public static final double kRearRightAngleZero = 60.47;
+		public static final double kFrontRightAngleZero = 0;
+		public static final double kRearLeftAngleZero = 0;
+		public static final double kRearRightAngleZero = 0;
 
+		// gains set for SDS mk4i using neo motors
 		public static final PIDGains kModuleDriveGains = new PIDGains(.1, 0, 0);
-
 		public static final PIDGains kModuleTurningGains = new PIDGains(1, 0, 0);
 	}
 
@@ -153,7 +153,7 @@ public final class Constants {
 	/**
 	 * The constants pertaining to the drive station
 	 */
-	public static class OperatorConstants {
+	public static class DriverConstants {
 		public static final int kDriveJoystickPort = 0;
 		public static final int kTurnJoystickPort = 1;
 		public static final int kOperatorControllerPort = 2;

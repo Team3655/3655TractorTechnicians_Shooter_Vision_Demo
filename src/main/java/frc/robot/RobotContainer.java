@@ -15,8 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.TractorToolbox.JoystickUtils;
+import frc.robot.Constants.DriverConstants;
 import frc.robot.TractorToolbox.TractorParts.PathBuilder;
 import frc.robot.commands.TurnCommand;
 import frc.robot.commands.Autonomous.BalanceCommand;
@@ -40,13 +39,13 @@ public class RobotContainer {
 	public final static PathBuilder autoBuilder = new PathBuilder();
 
 	private final CommandJoystick driveJoystick = new CommandJoystick(
-			OperatorConstants.kDriveJoystickPort);
+			DriverConstants.kDriveJoystickPort);
 	private final CommandJoystick turnJoystick = new CommandJoystick(
-			OperatorConstants.kTurnJoystickPort);
+			DriverConstants.kTurnJoystickPort);
 	private final CommandGenericHID operatorController = new CommandGenericHID(
-			OperatorConstants.kOperatorControllerPort);
+			DriverConstants.kOperatorControllerPort);
 	private final CommandXboxController programmerController = new CommandXboxController(
-			OperatorConstants.kProgrammerControllerPort);
+			DriverConstants.kProgrammerControllerPort);
 
 	private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -105,14 +104,10 @@ public class RobotContainer {
 		// Swerve Drive method is set as default for drive subsystem
 		driveSubsystem.setDefaultCommand(
 				new RunCommand(
-						() -> driveSubsystem.drive(
-								-JoystickUtils.processJoystickInput(driveJoystick.getY())
-										- programmerController.getLeftY(), // x axis
-								-JoystickUtils.processJoystickInput(driveJoystick.getX())
-										- programmerController.getLeftX(), // y axis
-								-JoystickUtils.processJoystickInput(turnJoystick.getX())
-										- JoystickUtils.processJoystickInput(programmerController.getRightX()), // rot
-																												// axis
+						() -> driveSubsystem.driverDrive(
+								-driveJoystick.getY() - programmerController.getLeftY(), // x axis
+								-driveJoystick.getX() - programmerController.getLeftX(), // y axis
+								-turnJoystick.getX() - programmerController.getRightX(), // rot axis
 								driveJoystick.getHID().getRawButton(1), // turbo boolean
 								driveJoystick.getHID().getRawButton(2)), // sneak boolean
 						driveSubsystem));

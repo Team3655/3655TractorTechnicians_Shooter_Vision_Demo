@@ -11,7 +11,6 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
@@ -23,6 +22,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.BaseModuleConstants;
+import frc.robot.TractorToolbox.SparkMaxMaker;
 import frc.robot.TractorToolbox.TractorParts.PIDGains;
 
 public class SwerveModule {
@@ -39,15 +39,17 @@ public class SwerveModule {
 	private final SparkMaxPIDController drivePID;
 	private final SparkMaxPIDController turnPID;
 
-	public final double angleZeroOffset;
+	private final double angleZeroOffset;
 
 	private final String moduleName;
 
+	private SwerveModuleState optimizedState;
+
 	public SwerveModule(
 			String moduleName,
-			int driveMotorChannel,
-			int turningMotorChannel,
-			int absoluteEncoderPort,
+			int driveMotorID,
+			int turningMotorID,
+			int absoluteEncoderID,
 			double angleZeroOffset,
 			PIDGains angularPIDGains,
 			PIDGains drivePIDGains) {
@@ -55,26 +57,21 @@ public class SwerveModule {
 		this.moduleName = moduleName;
 		this.angleZeroOffset = angleZeroOffset;
 
-		// Initialize the motors
-		driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
-		turnMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
-
-		driveMotor.setInverted(true);
-		turnMotor.setInverted(true);
-
-		turnMotor.restoreFactoryDefaults();
-		driveMotor.restoreFactoryDefaults();
-
-		turnMotor.setInverted(true);
-
 		// Initalize CANcoder
-		absoluteEncoder = new CANCoder(absoluteEncoderPort, Constants.kDriveCANBusName);
+		absoluteEncoder = new CANCoder(absoluteEncoderID, Constants.kDriveCANBusName);
 		Timer.delay(1);
 		absoluteEncoder.configFactoryDefault();
 		absoluteEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
 		absoluteEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 		absoluteEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 10, 100);
 		absoluteEncoder.clearStickyFaults();
+
+		// Initialize the motors
+		driveMotor = SparkMaxMaker.createSparkMax(driveMotorID);
+		turnMotor = SparkMaxMaker.createSparkMax(turningMotorID);
+
+		turnMotor.setInverted(true);
+
 
 		driveEncoder = driveMotor.getEncoder();
 		driveEncoder.setPositionConversionFactor(
@@ -133,7 +130,7 @@ public class SwerveModule {
 	// Returns current position of the modules
 	public SwerveModulePosition getPosition() {
 
-		double moduleAngleRadians = Math.toRadians(absoluteEncoder.getAbsolutePosition());
+		double moduleAngleRadians = getHeading();
 
 		double distanceMeters = driveEncoder.getPosition();
 
@@ -148,11 +145,11 @@ public class SwerveModule {
 
 	public void setDesiredState(SwerveModuleState desiredState, boolean isTurbo) {
 
-		double moduleAngleRadians = turnEncoder.getPosition();
+		double moduleAngleRadians = getHeading();
 
 		// Optimize the reference state to avoid spinning further than 90 degrees to the
 		// desired state
-		SwerveModuleState optimizedState = SwerveModuleState.optimize(
+		optimizedState = SwerveModuleState.optimize(
 				desiredState,
 				new Rotation2d(moduleAngleRadians));
 
@@ -169,10 +166,6 @@ public class SwerveModule {
 				optimizedState.angle.getRadians(),
 				ControlType.kPosition);
 
-		SmartDashboard.putNumber(this.moduleName + " Optimized Angle", optimizedState.angle.getDegrees());
-		SmartDashboard.putNumber(this.moduleName + " Turn Motor Output", turnMotor.getAppliedOutput());
-		SmartDashboard.putNumber(this.moduleName + " SparkEncoder Angle",
-				Units.radiansToDegrees(turnEncoder.getPosition()));
 	}
 
 	public void resetAbsoluteEncoder() {
@@ -185,6 +178,13 @@ public class SwerveModule {
 	public void stopMotors() {
 		driveMotor.stopMotor();
 		turnMotor.stopMotor();
+	}
+
+	public void updateTelemetry() {
+		SmartDashboard.putNumber(this.moduleName + " Optimized Angle", optimizedState.angle.getDegrees());
+		SmartDashboard.putNumber(this.moduleName + " Turn Motor Output", turnMotor.getAppliedOutput());
+		SmartDashboard.putNumber(this.moduleName + " SparkEncoder Angle",
+				Units.radiansToDegrees(turnEncoder.getPosition()));
 	}
 
 	// endregion: setters

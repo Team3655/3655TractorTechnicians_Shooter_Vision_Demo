@@ -1,6 +1,7 @@
 package frc.robot.TractorToolbox;
 
-import frc.robot.Constants.OperatorConstants;
+import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.Constants.DriverConstants;
 
 public class JoystickUtils {
 
@@ -11,7 +12,7 @@ public class JoystickUtils {
 	 * @return the constrained value
 	 */
 	public static double deadBand(double input) {
-		if (Math.abs(input) < OperatorConstants.KDeadBand) {
+		if (Math.abs(input) < DriverConstants.KDeadBand) {
 			return 0;
 		}
 		return input;
@@ -24,7 +25,7 @@ public class JoystickUtils {
 	 * @param input The input from the joystick
 	 * @return The corrected joystick values
 	 */
-	public static double processJoystickInput(double input) {
+	public static double curveInput(double input) {
 
 		// returns zero if input is less than deadband
 		if (deadBand(input) == 0)
@@ -33,13 +34,23 @@ public class JoystickUtils {
 		double correctedValue = input;
 
 		// does funky math to force linear input between deanband and 1
-		correctedValue = (correctedValue - (OperatorConstants.KDeadBand * Math.signum(correctedValue)))
-				/ (1 - OperatorConstants.KDeadBand);
+		correctedValue = (correctedValue - (DriverConstants.KDeadBand * Math.signum(correctedValue)))
+				/ (1 - DriverConstants.KDeadBand);
 
 		// raises input to a specified power for a smoother feel
-		correctedValue = Math.copySign(Math.pow(Math.abs(correctedValue), OperatorConstants.kJoystickPow), input);
+		correctedValue = Math.copySign(Math.pow(Math.abs(correctedValue), DriverConstants.kJoystickPow), input);
 
 		return correctedValue;
+	}
+
+	public static Translation2d curveTranslation2d(Translation2d translation) {
+		double norm = translation.getNorm();
+		double curvedNorm = curveInput(norm);
+		double scaleFactor = Math.abs(curvedNorm / norm);
+
+		translation.times(scaleFactor);
+
+		return translation;
 	}
 
 }
