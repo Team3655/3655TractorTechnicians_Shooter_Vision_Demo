@@ -18,7 +18,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.BaseModuleConstants;
@@ -26,10 +25,10 @@ import frc.robot.TractorToolbox.SparkMaxMaker;
 import frc.robot.TractorToolbox.TractorParts.PIDGains;
 
 public class SwerveModule {
-	/** Creates a new SwerveModule. */
 
-	private final CANSparkMax driveMotor;
 	private final CANSparkMax turnMotor;
+	private final CANSparkMax leaderDriveMotor;
+	private final CANSparkMax followerDriveMotor;
 
 	private final CANCoder absoluteEncoder;
 
@@ -45,6 +44,7 @@ public class SwerveModule {
 
 	private SwerveModuleState optimizedState;
 
+	/** Creates a new SwerveModule. */
 	public SwerveModule(
 			String moduleName,
 			int turningMotorID,
@@ -60,7 +60,6 @@ public class SwerveModule {
 
 		// Initalize CANcoder
 		absoluteEncoder = new CANCoder(absoluteEncoderID, Constants.kDriveCANBusName);
-		Timer.delay(1);
 		absoluteEncoder.configFactoryDefault();
 		absoluteEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
 		absoluteEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
@@ -68,50 +67,49 @@ public class SwerveModule {
 		absoluteEncoder.clearStickyFaults();
 
 		// Initialize the motors
-		driveMotor = SparkMaxMaker.createSparkMax(leaderDriveMotorID);
+		// Initialize turning motor, encoder, and PID
+		// Turn Motor
 		turnMotor = SparkMaxMaker.createSparkMax(turningMotorID);
-
 		turnMotor.setInverted(true);
+		turnMotor.setIdleMode(IdleMode.kBrake);
+		turnMotor.setSmartCurrentLimit(BaseModuleConstants.kTurnMotorCurrentLimit);
+		// Turn Encoder
+		turnEncoder = turnMotor.getEncoder();
+		turnEncoder.setPositionConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio); // radians
+		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio * (1d / 60d)); // radians per second
+		turnEncoder.setPosition(Units.degreesToRadians(absoluteEncoder.getAbsolutePosition() - angleZeroOffset));
+		// Turn PID
+		turnPID = turnMotor.getPIDController();
+		turnPID.setP(angularPIDGains.kP);
+		turnPID.setI(angularPIDGains.kI);
+		turnPID.setD(angularPIDGains.kD);
+		turnPID.setPositionPIDWrappingEnabled(true);
+		turnPID.setPositionPIDWrappingMinInput(-Math.PI);
+		turnPID.setPositionPIDWrappingMaxInput(Math.PI);
 
-
-		driveEncoder = driveMotor.getEncoder();
+		// Leader Drive Motor
+		leaderDriveMotor = SparkMaxMaker.createSparkMax(leaderDriveMotorID);
+		leaderDriveMotor.setIdleMode(IdleMode.kBrake);
+		leaderDriveMotor.setSmartCurrentLimit(BaseModuleConstants.kDriveMotorCurrentLimit);
+		// Leader Drive Encoder
+		driveEncoder = leaderDriveMotor.getEncoder();
 		driveEncoder.setPositionConversionFactor(
 				BaseModuleConstants.kdriveGearRatio * BaseModuleConstants.kwheelCircumference); // meters
 		driveEncoder.setVelocityConversionFactor(
 				BaseModuleConstants.kdriveGearRatio
 						* BaseModuleConstants.kwheelCircumference
 						* (1d / 60d)); // meters per second
-
-		turnEncoder = turnMotor.getEncoder();
-		turnEncoder.setPositionConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio);
-		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio * (1d / 60d));
-		turnEncoder.setPosition(Units.degreesToRadians(absoluteEncoder.getAbsolutePosition() - angleZeroOffset));
-
-		// Initialize PID's
-		drivePID = driveMotor.getPIDController();
+		// Leader Drive PID
+		drivePID = leaderDriveMotor.getPIDController();
 		drivePID.setP(drivePIDGains.kP);
 		drivePID.setI(drivePIDGains.kI);
 		drivePID.setD(drivePIDGains.kD);
-
-		turnPID = turnMotor.getPIDController();
-		turnPID.setP(angularPIDGains.kP);
-		turnPID.setI(angularPIDGains.kI);
-		turnPID.setD(angularPIDGains.kD);
-
 		drivePID.setFF(BaseModuleConstants.kDriveFeedForward);
 
-		// Configure current limits for motors
-		driveMotor.setIdleMode(IdleMode.kBrake);
-		turnMotor.setIdleMode(IdleMode.kBrake);
-		turnMotor.setSmartCurrentLimit(BaseModuleConstants.kTurnMotorCurrentLimit);
-		driveMotor.setSmartCurrentLimit(BaseModuleConstants.kDriveMotorCurrentLimit);
+		// Follower Drive Motor
+		followerDriveMotor = SparkMaxMaker.createSparkMax(followerDriveMotorID);
+		followerDriveMotor.follow(leaderDriveMotor);
 
-		turnPID.setPositionPIDWrappingEnabled(true);
-		turnPID.setPositionPIDWrappingMinInput(-Math.PI);
-		turnPID.setPositionPIDWrappingMaxInput(Math.PI);
-
-		SmartDashboard.putNumber(this.moduleName + " Offset", angleZeroOffset);
-		SmartDashboard.putString(this.moduleName + " Abs. Status", absoluteEncoder.getLastError().toString());
 	}
 
 	// Returns headings of the module
@@ -154,10 +152,9 @@ public class SwerveModule {
 				desiredState,
 				new Rotation2d(moduleAngleRadians));
 
-		
 		if (isTurbo) {
 			// Squeeze every bit if power out of turbo
-			driveMotor.set(Math.signum(optimizedState.speedMetersPerSecond));
+			leaderDriveMotor.set(Math.signum(optimizedState.speedMetersPerSecond));
 		} else {
 			drivePID.setReference(
 					optimizedState.speedMetersPerSecond,
@@ -178,12 +175,14 @@ public class SwerveModule {
 	}
 
 	public void stopMotors() {
-		driveMotor.stopMotor();
+		leaderDriveMotor.stopMotor();
 		turnMotor.stopMotor();
 	}
 
 	public void updateTelemetry() {
-		SmartDashboard.putNumber(moduleName + " Drive Current Draw", driveMotor.getOutputCurrent());
+		SmartDashboard.putNumber(moduleName + " Offset", angleZeroOffset);
+		SmartDashboard.putString(moduleName + " Abs. Status", absoluteEncoder.getLastError().toString());
+		SmartDashboard.putNumber(moduleName + " Drive Current Draw", leaderDriveMotor.getOutputCurrent());
 		SmartDashboard.putNumber(moduleName + " Optimized Angle", optimizedState.angle.getDegrees());
 		SmartDashboard.putNumber(moduleName + " Turn Motor Output", turnMotor.getAppliedOutput());
 		SmartDashboard.putNumber(moduleName + " SparkEncoder Angle",
