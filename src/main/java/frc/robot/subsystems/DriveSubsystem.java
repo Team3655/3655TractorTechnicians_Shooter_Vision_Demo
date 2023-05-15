@@ -56,36 +56,40 @@ public class DriveSubsystem extends SubsystemBase {
 
 		frontLeft = new SwerveModule(
 				"FL",
-				BaseModuleConstants.kPrimaryFrontLeftDriveMotorPort,
 				BaseModuleConstants.kFrontLeftTurningMotorPort,
-				BaseModuleConstants.kFrontLeftTurningEncoderPort,
+				BaseModuleConstants.kPrimaryFrontLeftDriveMotorPort,
+				BaseModuleConstants.kSecondaryFrontLeftDriveMotorPort,
+				BaseModuleConstants.kFrontLeftAbsoluteEncoderPort,
 				BaseModuleConstants.kFrontLeftAngleZero,
 				BaseModuleConstants.kModuleTurningGains,
 				BaseModuleConstants.kModuleDriveGains);
 
 		frontRight = new SwerveModule(
 				"FR",
-				BaseModuleConstants.kPrimaryFrontRightDriveMotorPort,
 				BaseModuleConstants.kFrontRightTurningMotorPort,
-				BaseModuleConstants.kFrontRightTurningEncoderPort,
+				BaseModuleConstants.kPrimaryFrontRightDriveMotorPort,
+				BaseModuleConstants.kSecondaryFrontRightDriveMotorPort,
+				BaseModuleConstants.kFrontRightAbsoluteEncoderPort,
 				BaseModuleConstants.kFrontRightAngleZero,
 				BaseModuleConstants.kModuleTurningGains,
 				BaseModuleConstants.kModuleDriveGains);
 
 		rearLeft = new SwerveModule(
 				"RL",
-				BaseModuleConstants.kPrimaryRearLeftDriveMotorPort,
 				BaseModuleConstants.kRearLeftTurningMotorPort,
-				BaseModuleConstants.kRearLeftTurningEncoderPort,
+				BaseModuleConstants.kPrimaryRearLeftDriveMotorPort,
+				BaseModuleConstants.kSecondaryRearLeftDriveMotorPort,
+				BaseModuleConstants.kRearLeftAbsoluteEncoderPort,
 				BaseModuleConstants.kRearLeftAngleZero,
 				BaseModuleConstants.kModuleTurningGains,
 				BaseModuleConstants.kModuleDriveGains);
 
 		rearRight = new SwerveModule(
 				"RR",
-				BaseModuleConstants.kPrimaryRearRightDriveMotorPort,
 				BaseModuleConstants.kRearRightTurningMotorPort,
-				BaseModuleConstants.kRearRightTurningEncoderPort,
+				BaseModuleConstants.kPrimaryRearRightDriveMotorPort,
+				BaseModuleConstants.kSecondaryRearRightDriveMotorPort,
+				BaseModuleConstants.kRearRightAbsoluteEncoderPort,
 				BaseModuleConstants.kRearRightAngleZero,
 				BaseModuleConstants.kModuleTurningGains,
 				BaseModuleConstants.kModuleDriveGains);

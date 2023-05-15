@@ -1,5 +1,6 @@
 package frc.robot.TractorToolbox;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants.DriverConstants;
 
@@ -33,7 +34,7 @@ public class JoystickUtils {
 
 		double correctedValue = input;
 
-		// does funky math to force linear input between deanband and 1
+		// does funky math to force linear output between deanband and 1
 		correctedValue = (correctedValue - (DriverConstants.KDeadBand * Math.signum(correctedValue)))
 				/ (1 - DriverConstants.KDeadBand);
 
@@ -44,11 +45,19 @@ public class JoystickUtils {
 	}
 
 	public static Translation2d curveTranslation2d(Translation2d translation) {
+		// gets the length and rotarion of the Translation2d (vector)
 		double norm = translation.getNorm();
-		double curvedNorm = curveInput(norm);
-		double scaleFactor = Math.abs(curvedNorm / norm);
+		Rotation2d angle = translation.getAngle();
 
-		translation.times(scaleFactor);
+		// applies outer deadband (because in this case the combination of x and y can cause the length to be greater than one)
+		if (norm > 1)
+			norm = 1;
+
+		// curves the length of the vector for smoother feel
+		double curvedNorm = curveInput(norm);
+
+		// create new curved Translation2d
+		translation = new Translation2d(curvedNorm, angle);
 
 		return translation;
 	}

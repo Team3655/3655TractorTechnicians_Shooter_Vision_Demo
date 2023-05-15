@@ -108,7 +108,7 @@ public class RobotContainer {
 								-driveJoystick.getY() - programmerController.getLeftY(), // x axis
 								-driveJoystick.getX() - programmerController.getLeftX(), // y axis
 								-turnJoystick.getX() - programmerController.getRightX(), // rot axis
-								driveJoystick.getHID().getRawButton(1), // turbo boolean
+								driveJoystick.getHID().getRawButton(1) || programmerController.rightBumper().getAsBoolean(), // turbo boolean
 								driveJoystick.getHID().getRawButton(2)), // sneak boolean
 						driveSubsystem));
 		// endregion

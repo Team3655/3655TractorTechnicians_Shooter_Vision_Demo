@@ -46,28 +46,28 @@ public final class Constants {
 		public static final double kvTurning = .43205;
 		public static final double ksTurning = .17161; // Tuned February 2, 2023
 
-		// NEO drive motor CAN ID's
-		public static final int kPrimaryFrontLeftDriveMotorPort = 1;
-		public static final int kPrimaryFrontRightDriveMotorPort = 2;
-		public static final int kPrimaryRearLeftDriveMotorPort = 3;
-		public static final int kPrimaryRearRightDriveMotorPort = 4;
-		
-		public static final int kSecondaryFrontLeftDriveMotorPort = 13;
-		public static final int kSecondaryFrontRightDriveMotorPort = 14;
-		public static final int kSecondaryRearLeftDriveMotorPort = 15;
-		public static final int kSecondaryRearRightDriveMotorPort = 16;
-
 		// NEO turning motor CAN ID's
-		public static final int kFrontLeftTurningMotorPort = 5;
-		public static final int kFrontRightTurningMotorPort = 6;
-		public static final int kRearLeftTurningMotorPort = 7;
-		public static final int kRearRightTurningMotorPort = 8;
+		public static final int kFrontLeftTurningMotorPort = 1;
+		public static final int kFrontRightTurningMotorPort = 2;
+		public static final int kRearLeftTurningMotorPort = 3;
+		public static final int kRearRightTurningMotorPort = 4;
+
+		public static final int kPrimaryFrontLeftDriveMotorPort = 5;
+		public static final int kPrimaryFrontRightDriveMotorPort = 6;
+		public static final int kPrimaryRearLeftDriveMotorPort = 7;
+		public static final int kPrimaryRearRightDriveMotorPort = 8;
+
+		// NEO drive motor CAN ID's
+		public static final int kSecondaryFrontLeftDriveMotorPort = 9;
+		public static final int kSecondaryFrontRightDriveMotorPort = 10;
+		public static final int kSecondaryRearLeftDriveMotorPort = 11;
+		public static final int kSecondaryRearRightDriveMotorPort = 12;
 
 		// CANcoder CAN ID's
-		public static final int kFrontLeftTurningEncoderPort = 9;
-		public static final int kFrontRightTurningEncoderPort = 10;
-		public static final int kRearLeftTurningEncoderPort = 11;
-		public static final int kRearRightTurningEncoderPort = 12;
+		public static final int kFrontLeftAbsoluteEncoderPort = 13;
+		public static final int kFrontRightAbsoluteEncoderPort = 14;
+		public static final int kRearLeftAbsoluteEncoderPort = 15;
+		public static final int kRearRightAbsoluteEncoderPort = 16;
 
 		// Offset angle for absolute encoders (find this using CTRE client)
 		public static final double kFrontLeftAngleZero = 0;
@@ -76,7 +76,7 @@ public final class Constants {
 		public static final double kRearRightAngleZero = 0;
 
 		// gains set for SDS mk4i using neo motors
-		public static final PIDGains kModuleDriveGains = new PIDGains(.1, 0, 0);
+		public static final PIDGains kModuleDriveGains = new PIDGains(.1, 0.001, 0);
 		public static final PIDGains kModuleTurningGains = new PIDGains(1, 0, 0);
 	}
 
@@ -84,7 +84,6 @@ public final class Constants {
 
 		public static final double kMaxSneakMetersPerSecond = 1.0;
 		public static final double kMaxSpeedMetersPerSecond = 4.5;
-		public static final double kMaxTurboMetersPerSecond = 8.0;
 
 		// this sets turning speed (keep this low)
 		public static final double kMaxRPM = 10;

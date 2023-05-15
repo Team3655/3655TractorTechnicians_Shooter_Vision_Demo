@@ -47,8 +47,9 @@ public class SwerveModule {
 
 	public SwerveModule(
 			String moduleName,
-			int driveMotorID,
 			int turningMotorID,
+			int leaderDriveMotorID,
+			int followerDriveMotorID,
 			int absoluteEncoderID,
 			double angleZeroOffset,
 			PIDGains angularPIDGains,
@@ -67,7 +68,7 @@ public class SwerveModule {
 		absoluteEncoder.clearStickyFaults();
 
 		// Initialize the motors
-		driveMotor = SparkMaxMaker.createSparkMax(driveMotorID);
+		driveMotor = SparkMaxMaker.createSparkMax(leaderDriveMotorID);
 		turnMotor = SparkMaxMaker.createSparkMax(turningMotorID);
 
 		turnMotor.setInverted(true);
@@ -153,9 +154,10 @@ public class SwerveModule {
 				desiredState,
 				new Rotation2d(moduleAngleRadians));
 
+		
 		if (isTurbo) {
+			// Squeeze every bit if power out of turbo
 			driveMotor.set(Math.signum(optimizedState.speedMetersPerSecond));
-
 		} else {
 			drivePID.setReference(
 					optimizedState.speedMetersPerSecond,
@@ -181,9 +183,10 @@ public class SwerveModule {
 	}
 
 	public void updateTelemetry() {
-		SmartDashboard.putNumber(this.moduleName + " Optimized Angle", optimizedState.angle.getDegrees());
-		SmartDashboard.putNumber(this.moduleName + " Turn Motor Output", turnMotor.getAppliedOutput());
-		SmartDashboard.putNumber(this.moduleName + " SparkEncoder Angle",
+		SmartDashboard.putNumber(moduleName + " Drive Current Draw", driveMotor.getOutputCurrent());
+		SmartDashboard.putNumber(moduleName + " Optimized Angle", optimizedState.angle.getDegrees());
+		SmartDashboard.putNumber(moduleName + " Turn Motor Output", turnMotor.getAppliedOutput());
+		SmartDashboard.putNumber(moduleName + " SparkEncoder Angle",
 				Units.radiansToDegrees(turnEncoder.getPosition()));
 	}
 
