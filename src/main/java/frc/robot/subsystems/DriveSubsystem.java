@@ -21,7 +21,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.BaseModuleConstants;
@@ -32,7 +32,7 @@ import frc.robot.TractorToolbox.LimelightHelpers;
 
 public class DriveSubsystem extends SubsystemBase {
 
-	private boolean fieldRelative = true;
+	private boolean useFieldCentric = true;
 
 	private final SwerveModule frontLeft;
 	private final SwerveModule frontRight;
@@ -124,6 +124,8 @@ public class DriveSubsystem extends SubsystemBase {
 		
 		updateOdometry();
 
+		frontLeft.updateTelemetry();
+
 		SmartDashboard.putNumber("FL Absolute", frontLeft.getAbsoluteHeading());
 		SmartDashboard.putNumber("FR Absolute", frontRight.getAbsoluteHeading());
 		SmartDashboard.putNumber("RL Absolute", rearLeft.getAbsoluteHeading());
@@ -195,21 +197,30 @@ public class DriveSubsystem extends SubsystemBase {
 		setModuleStates(swerveModuleStates, false);
 	}
 
-	public void robotCentricDrive(double xSpeed, double ySpeed, double rot) {
+	public void robotCentricDrive(double xSpeed, double ySpeed, double rotation) {
+		boolean wasFieldCentric = useFieldCentric;
 		setFieldCentric(false);
-		codeDrive(xSpeed, ySpeed, rot);
-		setFieldCentric(true);
+		codeDrive(xSpeed, ySpeed, rotation);
+		setFieldCentric(wasFieldCentric);
 	}
 
-	public void codeDrive(double xSpeed, double ySpeed, double rot) {
+	public void codeDrive(double xSpeed, double ySpeed, double rotation) {
 		Translation2d dir = new Translation2d(xSpeed, ySpeed);
-		drive(dir, rot, false, false);
+		drive(dir, rotation, false, false);
 	}
 
-	public void driverDrive(double xSpeed, double ySpeed, double rot, boolean isTurbo, boolean isSneak) {
+	/**
+	 * A drive function that curves the input for th drivers. DO NOT USE FOR DRIVING FUNCTIONS!
+	 * @param xSpeed 
+	 * @param ySpeed
+	 * @param rotation
+	 * @param isTurbo
+	 * @param isSneak
+	 */
+	public void driverDrive(double xSpeed, double ySpeed, double rotation, boolean isTurbo, boolean isSneak) {
 		Translation2d translation = new Translation2d(xSpeed, ySpeed);
 		translation = JoystickUtils.curveTranslation2d(translation);
-		drive(translation, rot, isTurbo, isSneak);
+		drive(translation, rotation, isTurbo, isSneak);
 	}
 
 	public void drive(Translation2d translation, double rotation, boolean isTurbo, boolean isSneak) {
@@ -230,7 +241,7 @@ public class DriveSubsystem extends SubsystemBase {
 		ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotation);
 
 		SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-				fieldRelative
+				useFieldCentric
 						? ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, gyro.getRotation2d())
 						: new ChassisSpeeds(xSpeed, ySpeed, rotation));
 
@@ -276,13 +287,6 @@ public class DriveSubsystem extends SubsystemBase {
 		field.setRobotPose(odometry.getPoseMeters());
 	}
 
-	public void resetEncoders() {
-		frontLeft.resetAbsoluteEncoder();
-		rearLeft.resetAbsoluteEncoder();
-		frontRight.resetAbsoluteEncoder();
-		rearRight.resetAbsoluteEncoder();
-	}
-
 	public void zeroHeading() {
 		gyro.reset();
 	}
@@ -291,14 +295,12 @@ public class DriveSubsystem extends SubsystemBase {
 		gyro.setYaw(heading);
 	}
 
-	public CommandBase toggleFieldCentric() {
-		return runOnce(() -> {
-			fieldRelative = !fieldRelative;
-		});
+	public void setFieldCentric(boolean fieldCentric) {
+		useFieldCentric = fieldCentric;
 	}
 
-	public void setFieldCentric(boolean fieldCentric) {
-		fieldRelative = fieldCentric;
+	public InstantCommand toggleFieldCentric() {
+		return new InstantCommand(() -> setFieldCentric(!useFieldCentric));
 	}
 
 	public void stopMotors() {

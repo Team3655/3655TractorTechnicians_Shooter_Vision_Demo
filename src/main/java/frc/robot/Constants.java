@@ -77,7 +77,7 @@ public final class Constants {
 
 		// gains set for SDS mk4i using neo motors
 		public static final PIDGains kModuleDriveGains = new PIDGains(.1, 0.001, 0);
-		public static final PIDGains kModuleTurningGains = new PIDGains(1, 0, 0);
+		public static final PIDGains kModuleTurningGains = new PIDGains(1, 0.00001, 0);
 	}
 
 	public static class DriveConstants {
@@ -158,7 +158,7 @@ public final class Constants {
 		public static final int kOperatorControllerPort = 2;
 		public static final int kProgrammerControllerPort = 3;
 
-		public static final double KDeadBand = .125;
+		public static final double KDeadBand = .075;
 		// this is the number that the joystick input will be raised to
 		public static final double kJoystickPow = 2.5;
 	}
