@@ -8,12 +8,10 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -36,7 +34,7 @@ public class SwerveModule {
 
 	private final RelativeEncoder driveEncoder;
 	private final RelativeEncoder turnEncoder;
-	private final AbsoluteEncoder throughBore;
+	// private final AbsoluteEncoder throughBore;
 
 	private final SparkMaxPIDController drivePID;
 	private final SparkMaxPIDController turnPID;
@@ -80,9 +78,7 @@ public class SwerveModule {
 		// Turn Encoder
 		turnEncoder = turnMotor.getEncoder();
 		turnEncoder.setPositionConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio); // radians
-		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio * (1d / 60d)); // radians
-																													// per
-																													// second
+		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio * (1d / 60d)); // radians per second
 		turnEncoder.setPosition(Units.degreesToRadians(absoluteEncoder.getAbsolutePosition() - angleZeroOffset));
 		// Turn PID
 		turnPID = turnMotor.getPIDController();
@@ -114,19 +110,20 @@ public class SwerveModule {
 
 		// Follower Drive Motor
 		followerDriveMotor = SparkMaxMaker.createSparkMax(followerDriveMotorID);
-		followerDriveMotor.follow(leaderDriveMotor);
+		followerDriveMotor.follow(leaderDriveMotor, true);
+		followerDriveMotor.setSmartCurrentLimit(20);
 
-		throughBore = turnMotor.getAbsoluteEncoder(Type.kDutyCycle);
-		throughBore.setPositionConversionFactor((2 * Math.PI));
+		// throughBore = turnMotor.getAbsoluteEncoder(Type.kDutyCycle);
+		// throughBore.setPositionConversionFactor((2 * Math.PI));
 
-		turnPID.setFeedbackDevice(throughBore);
+		// turnPID.setFeedbackDevice(throughBore);
 	}
 
 	// Returns headings of the module
 
 	/** returns the current heading of the module in radians */
 	public double getHeading() {
-		return turnEncoder.getPosition();
+		return turnEncoder.getPosition();  // % Math.PI;
 	}
 
 	/** returns the current heading of the module from the absolute encoder in radians */
@@ -190,14 +187,14 @@ public class SwerveModule {
 
 	public void updateTelemetry() {
 		SmartDashboard.putNumber(moduleName + " Angle Error", Units.radiansToDegrees(getAngleError()));
-		SmartDashboard.putNumber(moduleName + " ThroughBore Angle", Units.radiansToDegrees(throughBore.getPosition()));
+		// SmartDashboard.putNumber(moduleName + " ThroughBore Angle", Units.radiansToDegrees(throughBore.getPosition()));
 		SmartDashboard.putNumber(moduleName + " Offset", angleZeroOffset);
 		SmartDashboard.putString(moduleName + " Abs. Status", absoluteEncoder.getLastError().toString());
 		SmartDashboard.putNumber(moduleName + " Drive Current Draw", leaderDriveMotor.getOutputCurrent());
 		SmartDashboard.putNumber(moduleName + " Optimized Angle", optimizedState.angle.getDegrees());
 		SmartDashboard.putNumber(moduleName + " Turn Motor Output", turnMotor.getAppliedOutput());
 		SmartDashboard.putNumber(moduleName + " SparkEncoder Angle",
-				Units.radiansToDegrees(turnEncoder.getPosition()));
+				Units.radiansToDegrees(getHeading()));
 	}
 
 	// endregion: setters
