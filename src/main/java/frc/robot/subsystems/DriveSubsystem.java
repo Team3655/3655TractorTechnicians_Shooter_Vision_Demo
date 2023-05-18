@@ -101,7 +101,7 @@ public class DriveSubsystem extends SubsystemBase {
 				rearRight.getPosition()
 		};
 
-		gyro = new WPI_Pigeon2(DriveConstants.kPigeonPort, Constants.kDriveCANBusName);
+		gyro = new WPI_Pigeon2(DriveConstants.kPigeonPort, Constants.kCTRECANBusName);
 		gyro.setYaw(0);
 
 		odometry = new SwerveDriveOdometry(

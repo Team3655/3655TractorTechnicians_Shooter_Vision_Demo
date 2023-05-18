@@ -31,13 +31,13 @@ public final class Constants {
 		public static final int kDriveMotorCurrentLimit = 35;
 
 		// Constants set for the _SDS MK4i_
-		public static final double kdriveGearRatio = 1d / 6.75;
+		public static final double kdriveGearRatio = 1d / 5.56;
 		public static final double kturnGearRatio = 1d / (150d / 7d);
 
 		public static final double kwheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
 		// The max speed the modules are capable of
-		public static final double kMaxModuleSpeedMetersPerSecond = Units.feetToMeters(18.12);
+		public static final double kMaxModuleSpeedMetersPerSecond = Units.feetToMeters(15);
 
 		public static final double ksVolts = .1;
 		public static final double kDriveFeedForward = .2;
@@ -76,8 +76,8 @@ public final class Constants {
 		public static final double kRearRightAngleZero = 0;
 
 		// gains set for SDS mk4i using neo motors
-		public static final PIDGains kModuleDriveGains = new PIDGains(.1, 0, 0);
-		public static final PIDGains kModuleTurningGains = new PIDGains(1, 0, 0);
+		public static final PIDGains kModuleDriveGains = new PIDGains(.1, 0.0001, 0);
+		public static final PIDGains kModuleTurningGains = new PIDGains(1.5, 0, 0.0016);
 	}
 
 	public static class DriveConstants {
@@ -158,7 +158,7 @@ public final class Constants {
 		public static final int kOperatorControllerPort = 2;
 		public static final int kProgrammerControllerPort = 3;
 
-		public static final double KDeadBand = .075;
+		public static final double KDeadBand = .1;
 		// this is the number that the joystick input will be raised to
 		public static final double kJoystickPow = 2.5;
 	}
@@ -186,6 +186,6 @@ public final class Constants {
 
 	public static final String kRioCANBusName = "rio";
 
-	public static final String kDriveCANBusName = "rio";
+	public static final String kCTRECANBusName = "rio";
 
 }

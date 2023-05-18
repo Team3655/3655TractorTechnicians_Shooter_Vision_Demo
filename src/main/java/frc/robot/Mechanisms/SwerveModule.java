@@ -11,6 +11,7 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
@@ -61,7 +62,7 @@ public class SwerveModule {
 		optimizedState = new SwerveModuleState();
 
 		// Initalize CANcoder
-		absoluteEncoder = new CANCoder(absoluteEncoderID, Constants.kDriveCANBusName);
+		absoluteEncoder = new CANCoder(absoluteEncoderID, Constants.kCTRECANBusName);
 		absoluteEncoder.configFactoryDefault();
 		absoluteEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
 		absoluteEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
@@ -101,17 +102,22 @@ public class SwerveModule {
 				BaseModuleConstants.kdriveGearRatio
 						* BaseModuleConstants.kwheelCircumference
 						* (1d / 60d)); // meters per second
+
 		// Leader Drive PID
 		drivePID = leaderDriveMotor.getPIDController();
 		drivePID.setP(drivePIDGains.kP);
 		drivePID.setI(drivePIDGains.kI);
 		drivePID.setD(drivePIDGains.kD);
+		drivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
+		drivePID.setSmartMotionMaxAccel(3, 0);
+		drivePID.setSmartMotionMaxVelocity(5, 0);
+		drivePID.setSmartMotionAllowedClosedLoopError(.03, 0);
 		drivePID.setFF(BaseModuleConstants.kDriveFeedForward);
 
 		// Follower Drive Motor
 		followerDriveMotor = SparkMaxMaker.createSparkMax(followerDriveMotorID);
 		followerDriveMotor.follow(leaderDriveMotor, true);
-		followerDriveMotor.setSmartCurrentLimit(20);
+		followerDriveMotor.setSmartCurrentLimit(35);
 
 		// throughBore = turnMotor.getAbsoluteEncoder(Type.kDutyCycle);
 		// throughBore.setPositionConversionFactor((2 * Math.PI));
@@ -168,11 +174,12 @@ public class SwerveModule {
 
 		if (isTurbo) {
 			// Squeeze every last bit if power out of turbo
-			leaderDriveMotor.set(Math.signum(optimizedState.speedMetersPerSecond));
+			leaderDriveMotor.setVoltage(12 * Math.signum(optimizedState.speedMetersPerSecond));
+			drivePID.setIAccum(0);
 		} else {
 			drivePID.setReference(
 					optimizedState.speedMetersPerSecond,
-					ControlType.kVelocity);
+					ControlType.kSmartVelocity);
 		}
 
 		turnPID.setReference(
@@ -193,6 +200,8 @@ public class SwerveModule {
 		SmartDashboard.putNumber(moduleName + " Drive Current Draw", leaderDriveMotor.getOutputCurrent());
 		SmartDashboard.putNumber(moduleName + " Optimized Angle", optimizedState.angle.getDegrees());
 		SmartDashboard.putNumber(moduleName + " Turn Motor Output", turnMotor.getAppliedOutput());
+		SmartDashboard.putNumber(moduleName + " Target Velocity", optimizedState.speedMetersPerSecond);	
+		SmartDashboard.putNumber(moduleName + " Velocity", driveEncoder.getVelocity());
 		SmartDashboard.putNumber(moduleName + " SparkEncoder Angle",
 				Units.radiansToDegrees(getHeading()));
 	}
