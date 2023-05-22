@@ -121,24 +121,17 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		
+
 		updateOdometry();
 
 		frontLeft.updateTelemetry();
-
-		SmartDashboard.putNumber("FL Absolute", frontLeft.getAbsoluteHeading());
-		SmartDashboard.putNumber("FR Absolute", frontRight.getAbsoluteHeading());
-		SmartDashboard.putNumber("RL Absolute", rearLeft.getAbsoluteHeading());
-		SmartDashboard.putNumber("RR Absolute", rearRight.getAbsoluteHeading());
+		frontRight.updateTelemetry();
+		rearLeft.updateTelemetry();
+		rearRight.updateTelemetry();
 
 		SmartDashboard.putNumber("Gyro yaw", gyro.getYaw());
 		SmartDashboard.putNumber("Gyro pitch", gyro.getPitch());
 		SmartDashboard.putNumber("Gyro roll", gyro.getRoll());
-
-		SmartDashboard.putNumber("FL Meters", frontLeft.getDistanceMeters());
-		SmartDashboard.putNumber("FR Meters", frontRight.getDistanceMeters());
-		SmartDashboard.putNumber("RL Meters", rearLeft.getDistanceMeters());
-		SmartDashboard.putNumber("RR Meters", rearRight.getDistanceMeters());
 
 		SmartDashboard.putData("field", field);
 		SmartDashboard.putNumber("2D Gyro", odometry.getPoseMeters().getRotation().getDegrees());
@@ -210,8 +203,10 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * A drive function that curves the input for th drivers. DO NOT USE FOR DRIVING FUNCTIONS!
-	 * @param xSpeed 
+	 * A drive function that curves the input for th drivers. DO NOT USE FOR
+	 * ANYTHING BUT THE DRIVER! use codeDrive() instead
+	 * 
+	 * @param xSpeed
 	 * @param ySpeed
 	 * @param rotation
 	 * @param isTurbo
@@ -230,21 +225,26 @@ public class DriveSubsystem extends SubsystemBase {
 		if (isSneak) {
 			maxSpeed = DriveConstants.kMaxSneakMetersPerSecond;
 		} else {
-			maxSpeed = DriveConstants.kMaxSpeedMetersPerSecond;	
+			maxSpeed = DriveConstants.kMaxSpeedMetersPerSecond;
 		}
 
-		double xSpeed = maxSpeed * translation.getX();
-		double ySpeed = maxSpeed * translation.getY();
+		translation.times(maxSpeed);
+
+		double xSpeed = translation.getX();
+		double ySpeed = translation.getY();
 
 		rotation *= DriveConstants.kMaxRPM;
 
+		//ChassisSpeeds chassisSpeeds = new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond)
+
 		ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotation);
 
-		SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-				useFieldCentric
-						? ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, gyro.getRotation2d())
-						: new ChassisSpeeds(xSpeed, ySpeed, rotation));
+		if (useFieldCentric)
+			ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, gyro.getRotation2d());
 
+		SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+
+		// set the swerve modules to their states
 		setModuleStates(swerveModuleStates, isTurbo);
 	}
 
@@ -277,11 +277,12 @@ public class DriveSubsystem extends SubsystemBase {
 
 		if (LimelightHelpers.getTV("")) {
 			Pose2d llPose2d = LimelightHelpers.getBotPose2d_wpiRed("");
-			double latency = Units.millisecondsToSeconds(LimelightHelpers.getLatency_Capture("") - LimelightHelpers.getLatency_Pipeline(""));
+			double latency = Units.millisecondsToSeconds(
+					LimelightHelpers.getLatency_Capture("") - LimelightHelpers.getLatency_Pipeline(""));
 			double timeStamp = Timer.getFPGATimestamp() - latency;
 			poseEstimator.addVisionMeasurement(
-				llPose2d, 
-				timeStamp); 
+					llPose2d,
+					timeStamp);
 		}
 
 		field.setRobotPose(odometry.getPoseMeters());
