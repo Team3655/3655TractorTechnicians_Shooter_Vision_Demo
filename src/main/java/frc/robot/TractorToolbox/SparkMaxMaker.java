@@ -15,7 +15,7 @@ public class SparkMaxMaker {
 		return motor;
 	}
 
-	public static RelativeEncoder createEncoder(CANSparkMax motor, double gearRatio, double unit) {
+	public static RelativeEncoder createEncoder(CANSparkMax motor, double unit, double gearRatio) {
 
 		RelativeEncoder encoder = motor.getEncoder();
 

@@ -123,20 +123,6 @@ public class DriveSubsystem extends SubsystemBase {
 		// This method will be called once per scheduler run
 
 		updateOdometry();
-
-		frontLeft.updateTelemetry();
-		frontRight.updateTelemetry();
-		rearLeft.updateTelemetry();
-		rearRight.updateTelemetry();
-
-		SmartDashboard.putNumber("Gyro yaw", gyro.getYaw());
-		SmartDashboard.putNumber("Gyro pitch", gyro.getPitch());
-		SmartDashboard.putNumber("Gyro roll", gyro.getRoll());
-
-		SmartDashboard.putData("field", field);
-		SmartDashboard.putNumber("2D Gyro", odometry.getPoseMeters().getRotation().getDegrees());
-		SmartDashboard.putNumber("2D X", getPose().getX());
-		SmartDashboard.putNumber("2D Y", getPose().getY());
 	}
 
 	// region getters
@@ -228,14 +214,12 @@ public class DriveSubsystem extends SubsystemBase {
 			maxSpeed = DriveConstants.kMaxSpeedMetersPerSecond;
 		}
 
-		translation.times(maxSpeed);
+		translation = translation.times(maxSpeed);
 
 		double xSpeed = translation.getX();
 		double ySpeed = translation.getY();
 
 		rotation *= DriveConstants.kMaxRPM;
-
-		//ChassisSpeeds chassisSpeeds = new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond)
 
 		ChassisSpeeds chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotation);
 
@@ -309,6 +293,22 @@ public class DriveSubsystem extends SubsystemBase {
 		frontRight.stopMotors();
 		rearLeft.stopMotors();
 		rearRight.stopMotors();
+	}
+
+	public void updateTelemetry() {
+		frontLeft.updateTelemetry();
+		frontRight.updateTelemetry();
+		rearLeft.updateTelemetry();
+		rearRight.updateTelemetry();
+
+		SmartDashboard.putNumber("Gyro yaw", gyro.getYaw());
+		SmartDashboard.putNumber("Gyro pitch", gyro.getPitch());
+		SmartDashboard.putNumber("Gyro roll", gyro.getRoll());
+
+		SmartDashboard.putData("field", field);
+		SmartDashboard.putNumber("2D Gyro", odometry.getPoseMeters().getRotation().getDegrees());
+		SmartDashboard.putNumber("2D X", getPose().getX());
+		SmartDashboard.putNumber("2D Y", getPose().getY());
 	}
 
 	// endregion

@@ -26,10 +26,7 @@ public final class Constants {
 
 	public static class BaseModuleConstants {
 
-		public static final boolean kIsThroughBore = false;
-		public static final boolean kUseThroughBoreFeedback = false;
-		public static final boolean kIsCANCoder = true;
-
+		public static final boolean kUseThroughBore = false;
 
 		// Current limits for the wheels
 		public static final int kTurnMotorCurrentLimit = 25;
@@ -139,8 +136,6 @@ public final class Constants {
 				}
 			};
 		}
-
-		public static final double kScoreSequenceDropTime = 3; // in seconds
 
 		public static final PIDGains kTurnCommandGains = new PIDGains(.004, 0.0003, 0);
 		public static final double kTurnCommandMaxVelocity = 1;
