@@ -109,7 +109,7 @@ public class SwerveModule {
 		drivePID.setI(drivePIDGains.kI);
 		drivePID.setD(drivePIDGains.kD);
 		drivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
-		drivePID.setSmartMotionMaxAccel(3, 0);
+		drivePID.setSmartMotionMaxAccel(4, 0); 
 		drivePID.setSmartMotionMaxVelocity(5, 0);
 		drivePID.setSmartMotionAllowedClosedLoopError(.03, 0);
 		drivePID.setFF(BaseModuleConstants.kDriveFeedForward);
@@ -177,10 +177,17 @@ public class SwerveModule {
 			leaderDriveMotor.setVoltage(12 * Math.signum(optimizedState.speedMetersPerSecond));
 			drivePID.setIAccum(0);
 		} else {
+
+			if (optimizedState.speedMetersPerSecond == 0) {
+				drivePID.setIAccum(0);
+			}
+
 			drivePID.setReference(
 					optimizedState.speedMetersPerSecond,
 					ControlType.kSmartVelocity);
 		}
+
+
 
 		turnPID.setReference(
 				optimizedState.angle.getRadians(),
