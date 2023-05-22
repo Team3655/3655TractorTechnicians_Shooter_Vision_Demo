@@ -172,22 +172,18 @@ public class SwerveModule {
 				desiredState,
 				new Rotation2d(moduleAngleRadians));
 
+		if (optimizedState.speedMetersPerSecond <= 0 || isTurbo) {
+			drivePID.setIAccum(0);
+		}
+
 		if (isTurbo) {
 			// Squeeze every last bit if power out of turbo
 			leaderDriveMotor.setVoltage(12 * Math.signum(optimizedState.speedMetersPerSecond));
-			drivePID.setIAccum(0);
 		} else {
-
-			if (optimizedState.speedMetersPerSecond == 0) {
-				drivePID.setIAccum(0);
-			}
-
 			drivePID.setReference(
 					optimizedState.speedMetersPerSecond,
 					ControlType.kSmartVelocity);
 		}
-
-
 
 		turnPID.setReference(
 				optimizedState.angle.getRadians(),
