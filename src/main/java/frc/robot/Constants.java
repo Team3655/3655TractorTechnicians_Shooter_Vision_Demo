@@ -26,6 +26,11 @@ public final class Constants {
 
 	public static class BaseModuleConstants {
 
+		public static final boolean kIsThroughBore = false;
+		public static final boolean kUseThroughBoreFeedback = false;
+		public static final boolean kIsCANCoder = true;
+
+
 		// Current limits for the wheels
 		public static final int kTurnMotorCurrentLimit = 25;
 		public static final int kDriveMotorCurrentLimit = 35;
