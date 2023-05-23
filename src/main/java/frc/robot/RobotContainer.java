@@ -21,7 +21,6 @@ import frc.robot.commands.TurnCommand;
 import frc.robot.commands.Autonomous.BalanceCommand;
 import frc.robot.commands.Limelight.LLAlignCommand;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.TelemetrySubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -36,7 +35,6 @@ public class RobotContainer {
 
 	// The robot's subsystems and commands are defined here...
 	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
-	public static final TelemetrySubsystem telemetrySubsysten = new TelemetrySubsystem();
 
 	public final static PathBuilder autoBuilder = new PathBuilder();
 

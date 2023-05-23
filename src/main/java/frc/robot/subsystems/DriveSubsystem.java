@@ -190,13 +190,13 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/**
 	 * A drive function that curves the input for th drivers. DO NOT USE FOR
-	 * ANYTHING BUT THE DRIVER! use codeDrive() instead
+	 * ANYTHING BUT THE DRIVER! use codeDrive() instead.
 	 * 
-	 * @param xSpeed
-	 * @param ySpeed
-	 * @param rotation
-	 * @param isTurbo
-	 * @param isSneak
+	 * @param xSpeed 
+	 * @param ySpeed 
+	 * @param rotation 
+	 * @param isTurbo 
+	 * @param isSneak 
 	 */
 	public void driverDrive(double xSpeed, double ySpeed, double rotation, boolean isTurbo, boolean isSneak) {
 		Translation2d translation = new Translation2d(xSpeed, ySpeed);
@@ -312,5 +312,4 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	// endregion
-
 }
