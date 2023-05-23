@@ -39,7 +39,8 @@ public final class Constants {
 		public static final double kwheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
 		// The max speed the modules are capable of
-		public static final double kMaxModuleSpeedMetersPerSecond = Units.feetToMeters(18);
+		public static final double kMaxModuleAccelMetersPerSecond = 4;
+		public static final double kMaxModuleSpeedMetersPerSecond = 5.6;
 
 		public static final double ksVolts = .1;
 		public static final double kDriveFeedForward = .2;
@@ -78,14 +79,14 @@ public final class Constants {
 		public static final double kRearRightAngleZero = 0;
 
 		// gains set for SDS mk4i using neo motors
-		public static final PIDGains kModuleDriveGains = new PIDGains(.15, 0.00005, 0);
+		public static final PIDGains kModuleDriveGains = new PIDGains(.15, 0.001, 0);
 		public static final PIDGains kModuleTurningGains = new PIDGains(1.5, 0, 0.0016);
 	}
 
 	public static class DriveConstants {
 
 		public static final double kMaxSneakMetersPerSecond = 1.0;
-		public static final double kMaxSpeedMetersPerSecond = 5.52;
+		public static final double kMaxSpeedMetersPerSecond = 5.6;
 
 		// this sets turning speed (keep this low)
 		public static final double kMaxRPM = 10;

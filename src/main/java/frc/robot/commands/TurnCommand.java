@@ -23,6 +23,9 @@ public class TurnCommand extends CommandBase {
 	public TurnCommand(double targetAngleDegrees) {
 
 		driveSubsystem = RobotContainer.driveSubsystem;
+
+		addRequirements(driveSubsystem);
+
 		this.targetAngleDegrees = targetAngleDegrees;
 
 		turnPIDController = new PIDController(
@@ -38,8 +41,6 @@ public class TurnCommand extends CommandBase {
 				AutoConstants.kTurnCommandRateToleranceDegPerS);
 
 		turnPIDController.setSetpoint(this.targetAngleDegrees);
-
-		addRequirements(driveSubsystem);
 	}
 
 	// Called when the command is initially scheduled.

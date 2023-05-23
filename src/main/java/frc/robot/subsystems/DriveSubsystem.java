@@ -49,7 +49,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private Field2d field;
 
-	private SwerveDrivePoseEstimator poseEstimator;
+	private SwerveDrivePoseEstimator posEstimator;
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
@@ -111,7 +111,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 		field = new Field2d();
 
-		poseEstimator = new SwerveDrivePoseEstimator(
+		posEstimator = new SwerveDrivePoseEstimator(
 				DriveConstants.kDriveKinematics,
 				gyro.getRotation2d(),
 				swervePositions,
@@ -151,7 +151,7 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public Pose2d getPoseEstimatorPose2d() {
-		return poseEstimator.getEstimatedPosition();
+		return posEstimator.getEstimatedPosition();
 	}
 
 	public void resetOdometry(Pose2d pose) {
@@ -201,6 +201,7 @@ public class DriveSubsystem extends SubsystemBase {
 	public void driverDrive(double xSpeed, double ySpeed, double rotation, boolean isTurbo, boolean isSneak) {
 		Translation2d translation = new Translation2d(xSpeed, ySpeed);
 		translation = JoystickUtils.curveTranslation2d(translation);
+		rotation = JoystickUtils.curveInput(rotation);
 		drive(translation, rotation, isTurbo, isSneak);
 	}
 
@@ -257,14 +258,14 @@ public class DriveSubsystem extends SubsystemBase {
 				Rotation2d.fromDegrees(getHeading()),
 				swervePositions);
 
-		poseEstimator.update(gyro.getRotation2d(), swervePositions);
+		posEstimator.update(gyro.getRotation2d(), swervePositions);
 
 		if (LimelightHelpers.getTV("")) {
 			Pose2d llPose2d = LimelightHelpers.getBotPose2d_wpiRed("");
 			double latency = Units.millisecondsToSeconds(
 					LimelightHelpers.getLatency_Capture("") - LimelightHelpers.getLatency_Pipeline(""));
 			double timeStamp = Timer.getFPGATimestamp() - latency;
-			poseEstimator.addVisionMeasurement(
+			posEstimator.addVisionMeasurement(
 					llPose2d,
 					timeStamp);
 		}
