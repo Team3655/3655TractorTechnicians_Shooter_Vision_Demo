@@ -82,7 +82,6 @@ public class SwerveModule {
 		turnEncoder = turnMotor.getEncoder();
 		turnEncoder.setPositionConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio); // radians
 		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio * (1d / 60d)); // radians per second
-		turnEncoder.setPosition(Units.degreesToRadians(absoluteEncoder.getAbsolutePosition() - angleZeroOffset));
 		// Turn PID
 		turnPID = turnMotor.getPIDController();
 		turnPID.setP(angularPIDGains.kP);
@@ -183,7 +182,7 @@ public class SwerveModule {
 				desiredState,
 				new Rotation2d(moduleAngleRadians));
 
-		if (optimizedState.speedMetersPerSecond <= 0) {
+		if (optimizedState.speedMetersPerSecond <= 0) {	
 			drivePID.setIAccum(0);
 		}
 
