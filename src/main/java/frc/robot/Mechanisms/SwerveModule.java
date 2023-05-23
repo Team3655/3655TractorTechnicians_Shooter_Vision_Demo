@@ -76,7 +76,7 @@ public class SwerveModule {
 		// Turn Motor
 		turnMotor = SparkMaxMaker.createSparkMax(turningMotorID);
 		turnMotor.setInverted(true);
-		turnMotor.setIdleMode(IdleMode.kBrake);
+		turnMotor.setIdleMode(IdleMode.kCoast);
 		turnMotor.setSmartCurrentLimit(BaseModuleConstants.kTurnMotorCurrentLimit);
 		// Turn Encoder
 		turnEncoder = turnMotor.getEncoder();
@@ -111,9 +111,8 @@ public class SwerveModule {
 		drivePID.setI(drivePIDGains.kI);
 		drivePID.setD(drivePIDGains.kD);
 		drivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
-		drivePID.setSmartMotionMaxAccel(4, 0); 
-		drivePID.setSmartMotionMaxVelocity(5, 0);
-		drivePID.setSmartMotionAllowedClosedLoopError(.03, 0);
+		drivePID.setSmartMotionMaxAccel(BaseModuleConstants.kMaxModuleAccelMetersPerSecond, 0); 
+		drivePID.setSmartMotionMaxVelocity(BaseModuleConstants.kMaxModuleSpeedMetersPerSecond, 0);
 		drivePID.setFF(BaseModuleConstants.kDriveFeedForward);
 
 		// Follower Drive Motor
@@ -184,13 +183,18 @@ public class SwerveModule {
 				desiredState,
 				new Rotation2d(moduleAngleRadians));
 
-		if (optimizedState.speedMetersPerSecond <= 0 || isTurbo) {
+		if (optimizedState.speedMetersPerSecond <= 0) {
 			drivePID.setIAccum(0);
 		}
 
 		if (isTurbo) {
 			// Squeeze every last bit if power out of turbo
-			leaderDriveMotor.setVoltage(12 * Math.signum(optimizedState.speedMetersPerSecond));
+			// leaderDriveMotor.setVoltage(12 * Math.signum(optimizedState.speedMetersPerSecond));
+			double turboSpeed = Math.copySign(
+				BaseModuleConstants.kMaxModuleSpeedMetersPerSecond, 
+				optimizedState.speedMetersPerSecond);
+
+			drivePID.setReference(turboSpeed, ControlType.kSmartVelocity);
 		} else {
 			drivePID.setReference(
 					optimizedState.speedMetersPerSecond,

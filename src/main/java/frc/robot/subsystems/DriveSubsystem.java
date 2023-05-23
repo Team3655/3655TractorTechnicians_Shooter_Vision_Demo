@@ -201,6 +201,7 @@ public class DriveSubsystem extends SubsystemBase {
 	public void driverDrive(double xSpeed, double ySpeed, double rotation, boolean isTurbo, boolean isSneak) {
 		Translation2d translation = new Translation2d(xSpeed, ySpeed);
 		translation = JoystickUtils.curveTranslation2d(translation);
+		rotation = JoystickUtils.curveInput(rotation);
 		drive(translation, rotation, isTurbo, isSneak);
 	}
 
