@@ -10,7 +10,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.TractorToolbox.TractorParts.PIDGains;
+import frc.lib.TractorToolbox.TractorParts.PIDGains;
+import frc.lib.TractorToolbox.TractorParts.SwerveModuleConstants;
 import frc.robot.commands.Limelight.LLAlignCommand;
 
 /**
@@ -24,7 +25,7 @@ import frc.robot.commands.Limelight.LLAlignCommand;
  */
 public final class Constants {
 
-	public static class BaseModuleConstants {
+	public static class ModuleConstants {
 
 		public static final boolean kUseThroughBore = false;
 
@@ -49,38 +50,66 @@ public final class Constants {
 		public static final double kvTurning = .43205;
 		public static final double ksTurning = .17161; // Tuned February 2, 2023
 
-		// NEO turning motor CAN ID's
-		public static final int kFrontLeftTurningMotorPort = 1;
-		public static final int kFrontRightTurningMotorPort = 2;
-		public static final int kRearLeftTurningMotorPort = 3;
-		public static final int kRearRightTurningMotorPort = 4;
-
-		public static final int kPrimaryFrontLeftDriveMotorPort = 5;
-		public static final int kPrimaryFrontRightDriveMotorPort = 6;
-		public static final int kPrimaryRearLeftDriveMotorPort = 7;
-		public static final int kPrimaryRearRightDriveMotorPort = 8;
-
-		// NEO drive motor CAN ID's
-		public static final int kSecondaryFrontLeftDriveMotorPort = 9;
-		public static final int kSecondaryFrontRightDriveMotorPort = 10;
-		public static final int kSecondaryRearLeftDriveMotorPort = 11;
-		public static final int kSecondaryRearRightDriveMotorPort = 12;
-
-		// CANcoder CAN ID's
-		public static final int kFrontLeftAbsoluteEncoderPort = 13;
-		public static final int kFrontRightAbsoluteEncoderPort = 14;
-		public static final int kRearLeftAbsoluteEncoderPort = 15;
-		public static final int kRearRightAbsoluteEncoderPort = 16;
-
-		// Offset angle for absolute encoders (find this using CTRE client)
-		public static final double kFrontLeftAngleZero = 35.508;
-		public static final double kFrontRightAngleZero = 0;
-		public static final double kRearLeftAngleZero = 0;
-		public static final double kRearRightAngleZero = 0;
-
-		// gains set for SDS mk4i using neo motors
+		// gains set for R1 SDS mk4i using dual neo motors
 		public static final PIDGains kModuleDriveGains = new PIDGains(.15, 0.001, 0);
 		public static final PIDGains kModuleTurningGains = new PIDGains(1.5, 0, 0.0016);
+
+		// module specific constants
+		public static final class FrontLeftModule {
+			public static final int kTurningMotorID = 1;
+			public static final int kLeaderDriveMotorID = 5;
+			public static final int kFollowerDriveMotorID = 9;
+			public static final int kAbsoluteEncoderID = 13;
+			public static final double kAngleOffset = 35.508;
+			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
+					kAbsoluteEncoderID,
+					kTurningMotorID,
+					kLeaderDriveMotorID,
+					kFollowerDriveMotorID,
+					kAngleOffset);
+		}
+
+		public static final class FrontRightModule {
+			public static final int kTurningMotorID = 2;
+			public static final int kLeaderDriveMotorID = 6;
+			public static final int kFollowerDriveMotorID = 10;
+			public static final int kAbsoluteEncoderID = 14;
+			public static final double kAngleOffset = 0;
+			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
+					kAbsoluteEncoderID,
+					kTurningMotorID,
+					kLeaderDriveMotorID,
+					kFollowerDriveMotorID,
+					kAngleOffset);
+		}
+
+		public static final class BackLeftModule {
+			public static final int kTurningMotorID = 3;
+			public static final int kLeaderDriveMotorID = 7;
+			public static final int kFollowerDriveMotorID = 11;
+			public static final int kAbsoluteEncoderID = 15;
+			public static final double kAngleOffset = 0;
+			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
+					kAbsoluteEncoderID,
+					kTurningMotorID,
+					kLeaderDriveMotorID,
+					kFollowerDriveMotorID,
+					kAngleOffset);
+		}
+
+		public static final class BackRightModule {
+			public static final int kTurningMotorID = 4;
+			public static final int kLeaderDriveMotorID = 8;
+			public static final int kFollowerDriveMotorID = 12;
+			public static final int kAbsoluteEncoderID = 16;
+			public static final double kAngleOffset = 0;
+			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
+					kAbsoluteEncoderID,
+					kTurningMotorID,
+					kLeaderDriveMotorID,
+					kFollowerDriveMotorID,
+					kAngleOffset);
+		}
 	}
 
 	public static class DriveConstants {
@@ -174,7 +203,7 @@ public final class Constants {
 		// PID values for limelight
 		public static final PIDGains kLLTargetGains = new PIDGains(0.008, 0, 0);
 
-		public static final PIDGains kLLPuppyTurnGains = new PIDGains(0.02, 0, 0); //.008
+		public static final PIDGains kLLPuppyTurnGains = new PIDGains(0.02, 0, 0); // .008
 		public static final PIDGains kLLPuppyDriveGains = new PIDGains(0.008, 0, 0);
 		public static final double kPuppyTurnMotionSmoothing = 0.3;
 		public static final double kPuppyDriveMotionSmoothing = 0.4;

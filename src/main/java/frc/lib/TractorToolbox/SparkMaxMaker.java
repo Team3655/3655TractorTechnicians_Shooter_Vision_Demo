@@ -1,4 +1,4 @@
-package frc.robot.TractorToolbox;
+package frc.lib.TractorToolbox;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;

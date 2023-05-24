@@ -23,12 +23,16 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.TractorToolbox.JoystickUtils;
+import frc.lib.util.LimelightHelpers;
 import frc.robot.Constants;
-import frc.robot.Constants.BaseModuleConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ModuleConstants;
+import frc.robot.Constants.ModuleConstants.BackLeftModule;
+import frc.robot.Constants.ModuleConstants.BackRightModule;
+import frc.robot.Constants.ModuleConstants.FrontLeftModule;
+import frc.robot.Constants.ModuleConstants.FrontRightModule;
 import frc.robot.Mechanisms.SwerveModule;
-import frc.robot.TractorToolbox.JoystickUtils;
-import frc.robot.TractorToolbox.LimelightHelpers;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -36,8 +40,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private final SwerveModule frontLeft;
 	private final SwerveModule frontRight;
-	private final SwerveModule rearLeft;
-	private final SwerveModule rearRight;
+	private final SwerveModule backLeft;
+	private final SwerveModule backRight;
 
 	private SwerveModulePosition[] swervePositions;
 
@@ -56,49 +60,33 @@ public class DriveSubsystem extends SubsystemBase {
 
 		frontLeft = new SwerveModule(
 				"FL",
-				BaseModuleConstants.kFrontLeftTurningMotorPort,
-				BaseModuleConstants.kPrimaryFrontLeftDriveMotorPort,
-				BaseModuleConstants.kSecondaryFrontLeftDriveMotorPort,
-				BaseModuleConstants.kFrontLeftAbsoluteEncoderPort,
-				BaseModuleConstants.kFrontLeftAngleZero,
-				BaseModuleConstants.kModuleTurningGains,
-				BaseModuleConstants.kModuleDriveGains);
+				FrontLeftModule.kModuleConstants,
+				ModuleConstants.kModuleTurningGains,
+				ModuleConstants.kModuleDriveGains);
 
 		frontRight = new SwerveModule(
 				"FR",
-				BaseModuleConstants.kFrontRightTurningMotorPort,
-				BaseModuleConstants.kPrimaryFrontRightDriveMotorPort,
-				BaseModuleConstants.kSecondaryFrontRightDriveMotorPort,
-				BaseModuleConstants.kFrontRightAbsoluteEncoderPort,
-				BaseModuleConstants.kFrontRightAngleZero,
-				BaseModuleConstants.kModuleTurningGains,
-				BaseModuleConstants.kModuleDriveGains);
+				FrontRightModule.kModuleConstants,
+				ModuleConstants.kModuleTurningGains,
+				ModuleConstants.kModuleDriveGains);
 
-		rearLeft = new SwerveModule(
+		backLeft = new SwerveModule(
 				"RL",
-				BaseModuleConstants.kRearLeftTurningMotorPort,
-				BaseModuleConstants.kPrimaryRearLeftDriveMotorPort,
-				BaseModuleConstants.kSecondaryRearLeftDriveMotorPort,
-				BaseModuleConstants.kRearLeftAbsoluteEncoderPort,
-				BaseModuleConstants.kRearLeftAngleZero,
-				BaseModuleConstants.kModuleTurningGains,
-				BaseModuleConstants.kModuleDriveGains);
+				BackLeftModule.kModuleConstants,
+				ModuleConstants.kModuleTurningGains,
+				ModuleConstants.kModuleDriveGains);
 
-		rearRight = new SwerveModule(
+		backRight = new SwerveModule(
 				"RR",
-				BaseModuleConstants.kRearRightTurningMotorPort,
-				BaseModuleConstants.kPrimaryRearRightDriveMotorPort,
-				BaseModuleConstants.kSecondaryRearRightDriveMotorPort,
-				BaseModuleConstants.kRearRightAbsoluteEncoderPort,
-				BaseModuleConstants.kRearRightAngleZero,
-				BaseModuleConstants.kModuleTurningGains,
-				BaseModuleConstants.kModuleDriveGains);
+				BackRightModule.kModuleConstants,
+				ModuleConstants.kModuleTurningGains,
+				ModuleConstants.kModuleDriveGains);
 
 		swervePositions = new SwerveModulePosition[] {
 				frontLeft.getPosition(),
 				frontRight.getPosition(),
-				rearLeft.getPosition(),
-				rearRight.getPosition()
+				backLeft.getPosition(),
+				backRight.getPosition()
 		};
 
 		gyro = new WPI_Pigeon2(DriveConstants.kPigeonPort, Constants.kCTRECANBusName);
@@ -238,20 +226,20 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void setModuleStates(SwerveModuleState[] desiredStates, boolean isTurbo) {
-		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, BaseModuleConstants.kMaxModuleSpeedMetersPerSecond);
+		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, ModuleConstants.kMaxModuleSpeedMetersPerSecond);
 
 		frontLeft.setDesiredState(desiredStates[0], isTurbo);
 		frontRight.setDesiredState(desiredStates[1], isTurbo);
-		rearLeft.setDesiredState(desiredStates[2], isTurbo);
-		rearRight.setDesiredState(desiredStates[3], isTurbo);
+		backLeft.setDesiredState(desiredStates[2], isTurbo);
+		backRight.setDesiredState(desiredStates[3], isTurbo);
 	}
 
 	public void updateOdometry() {
 		swervePositions = new SwerveModulePosition[] {
 				frontLeft.getPosition(),
 				frontRight.getPosition(),
-				rearLeft.getPosition(),
-				rearRight.getPosition()
+				backLeft.getPosition(),
+				backRight.getPosition()
 		};
 
 		odometry.update(
@@ -292,15 +280,15 @@ public class DriveSubsystem extends SubsystemBase {
 	public void stopMotors() {
 		frontLeft.stopMotors();
 		frontRight.stopMotors();
-		rearLeft.stopMotors();
-		rearRight.stopMotors();
+		backLeft.stopMotors();
+		backRight.stopMotors();
 	}
 
 	public void updateTelemetry() {
 		frontLeft.updateTelemetry();
 		frontRight.updateTelemetry();
-		rearLeft.updateTelemetry();
-		rearRight.updateTelemetry();
+		backLeft.updateTelemetry();
+		backRight.updateTelemetry();
 
 		SmartDashboard.putNumber("Gyro yaw", gyro.getYaw());
 		SmartDashboard.putNumber("Gyro pitch", gyro.getPitch());

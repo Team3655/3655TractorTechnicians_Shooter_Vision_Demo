@@ -22,10 +22,11 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.lib.TractorToolbox.SparkMaxMaker;
+import frc.lib.TractorToolbox.TractorParts.PIDGains;
+import frc.lib.TractorToolbox.TractorParts.SwerveModuleConstants;
 import frc.robot.Constants;
-import frc.robot.Constants.BaseModuleConstants;
-import frc.robot.TractorToolbox.SparkMaxMaker;
-import frc.robot.TractorToolbox.TractorParts.PIDGains;
+import frc.robot.Constants.ModuleConstants;
 
 public class SwerveModule {
 
@@ -51,20 +52,16 @@ public class SwerveModule {
 	/** Creates a new SwerveModule. */
 	public SwerveModule(
 			String moduleName,
-			int turningMotorID,
-			int leaderDriveMotorID,
-			int followerDriveMotorID,
-			int absoluteEncoderID,
-			double angleZeroOffset,
+			SwerveModuleConstants moduleConstants,
 			PIDGains angularPIDGains,
 			PIDGains drivePIDGains) {
 
 		this.moduleName = moduleName;
-		this.angleZeroOffset = angleZeroOffset;
+		this.angleZeroOffset = moduleConstants.kAngleZeroOffset;
 		optimizedState = new SwerveModuleState();
 
 		// Initalize CANcoder
-		absoluteEncoder = new CANCoder(absoluteEncoderID, Constants.kCTRECANBusName);
+		absoluteEncoder = new CANCoder(moduleConstants.kCANCoderID, Constants.kCTRECANBusName);
 		absoluteEncoder.configFactoryDefault();
 		absoluteEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
 		absoluteEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
@@ -74,14 +71,14 @@ public class SwerveModule {
 		// Initialize the motors
 		// Initialize turning motor, encoder, and PID
 		// Turn Motor
-		turnMotor = SparkMaxMaker.createSparkMax(turningMotorID);
+		turnMotor = SparkMaxMaker.createSparkMax(moduleConstants.kTurnMotorID);
 		turnMotor.setInverted(true);
 		turnMotor.setIdleMode(IdleMode.kCoast);
-		turnMotor.setSmartCurrentLimit(BaseModuleConstants.kTurnMotorCurrentLimit);
+		turnMotor.setSmartCurrentLimit(ModuleConstants.kTurnMotorCurrentLimit);
 		// Turn Encoder
 		turnEncoder = turnMotor.getEncoder();
-		turnEncoder.setPositionConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio); // radians
-		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * BaseModuleConstants.kturnGearRatio * (1d / 60d)); // radians per second
+		turnEncoder.setPositionConversionFactor((2 * Math.PI) * ModuleConstants.kturnGearRatio); // radians
+		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * ModuleConstants.kturnGearRatio * (1d / 60d)); // radians per second
 		// Turn PID
 		turnPID = turnMotor.getPIDController();
 		turnPID.setP(angularPIDGains.kP);
@@ -92,16 +89,16 @@ public class SwerveModule {
 		turnPID.setPositionPIDWrappingMaxInput(Math.PI);
 
 		// Leader Drive Motor
-		leaderDriveMotor = SparkMaxMaker.createSparkMax(leaderDriveMotorID);
+		leaderDriveMotor = SparkMaxMaker.createSparkMax(moduleConstants.kLeaderDriveMotorID);
 		leaderDriveMotor.setIdleMode(IdleMode.kBrake);
-		leaderDriveMotor.setSmartCurrentLimit(BaseModuleConstants.kDriveMotorCurrentLimit);
+		leaderDriveMotor.setSmartCurrentLimit(ModuleConstants.kDriveMotorCurrentLimit);
 		// Leader Drive Encoder
 		driveEncoder = leaderDriveMotor.getEncoder();
 		driveEncoder.setPositionConversionFactor(
-				BaseModuleConstants.kdriveGearRatio * BaseModuleConstants.kwheelCircumference); // meters
+				ModuleConstants.kdriveGearRatio * ModuleConstants.kwheelCircumference); // meters
 		driveEncoder.setVelocityConversionFactor(
-				BaseModuleConstants.kdriveGearRatio
-						* BaseModuleConstants.kwheelCircumference
+				ModuleConstants.kdriveGearRatio
+						* ModuleConstants.kwheelCircumference
 						* (1d / 60d)); // meters per second
 
 		// Leader Drive PID
@@ -110,12 +107,12 @@ public class SwerveModule {
 		drivePID.setI(drivePIDGains.kI);
 		drivePID.setD(drivePIDGains.kD);
 		drivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
-		drivePID.setSmartMotionMaxAccel(BaseModuleConstants.kMaxModuleAccelMetersPerSecond, 0); 
-		drivePID.setSmartMotionMaxVelocity(BaseModuleConstants.kMaxModuleSpeedMetersPerSecond, 0);
-		drivePID.setFF(BaseModuleConstants.kDriveFeedForward);
+		drivePID.setSmartMotionMaxAccel(ModuleConstants.kMaxModuleAccelMetersPerSecond, 0); 
+		drivePID.setSmartMotionMaxVelocity(ModuleConstants.kMaxModuleSpeedMetersPerSecond, 0);
+		drivePID.setFF(ModuleConstants.kDriveFeedForward);
 
 		// Follower Drive Motor
-		followerDriveMotor = SparkMaxMaker.createSparkMax(followerDriveMotorID);
+		followerDriveMotor = SparkMaxMaker.createSparkMax(moduleConstants.kFolloweDriveMotorID);
 		followerDriveMotor.follow(leaderDriveMotor, true);
 		followerDriveMotor.setSmartCurrentLimit(35);
 
@@ -123,7 +120,7 @@ public class SwerveModule {
 		throughBore.setPositionConversionFactor((2 * Math.PI));
 		throughBore.setZeroOffset(-angleZeroOffset);
 
-		if (BaseModuleConstants.kUseThroughBore) {
+		if (ModuleConstants.kUseThroughBore) {
 			turnPID.setFeedbackDevice(throughBore);	
 		} else {
 			turnEncoder.setPosition(Units.degreesToRadians(absoluteEncoder.getAbsolutePosition() - angleZeroOffset));
@@ -190,7 +187,7 @@ public class SwerveModule {
 			// Squeeze every last bit if power out of turbo
 			// leaderDriveMotor.setVoltage(12 * Math.signum(optimizedState.speedMetersPerSecond));
 			double turboSpeed = Math.copySign(
-				BaseModuleConstants.kMaxModuleSpeedMetersPerSecond, 
+				ModuleConstants.kMaxModuleSpeedMetersPerSecond, 
 				optimizedState.speedMetersPerSecond);
 
 			drivePID.setReference(turboSpeed, ControlType.kSmartVelocity);

@@ -1,6 +1,6 @@
-package frc.robot.TractorToolbox.TractorParts;
+package frc.lib.TractorToolbox.TractorParts;
 
-public class SwerveModuleParameters {
+public class SwerveModuleConstants {
 
 	public final int kCANCoderID;
 	public final int kTurnMotorID;
@@ -8,12 +8,12 @@ public class SwerveModuleParameters {
 	public final int kFolloweDriveMotorID;
 	public final double kAngleZeroOffset;
 
-	public SwerveModuleParameters(
+	public SwerveModuleConstants(
 			int CANCoderID,
 			int TurnMotorID,
 			int LeaderDriveMotorID,
 			int FolloweDriveMotorID,
-			int AngleZeroOffset) {
+			double AngleZeroOffset) {
 		kCANCoderID = CANCoderID;
 		kTurnMotorID = TurnMotorID;
 		kLeaderDriveMotorID = LeaderDriveMotorID;
