@@ -27,6 +27,7 @@ import frc.lib.TractorToolbox.JoystickUtils;
 import frc.lib.util.LimelightHelpers;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.ModuleConstants.BackLeftModule;
 import frc.robot.Constants.ModuleConstants.BackRightModule;
@@ -49,7 +50,7 @@ public class DriveSubsystem extends SubsystemBase {
 	private final WPI_Pigeon2 gyro;
 
 	// Odeometry class for tracking robot pose
-	SwerveDriveOdometry odometry;
+	private SwerveDriveOdometry odometry;
 
 	private Field2d field;
 
@@ -140,6 +141,13 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public Pose2d getPoseEstimatorPose2d() {
 		return posEstimator.getEstimatedPosition();
+	}
+
+	public void resetPoseEstimator(Pose2d pose) {
+		posEstimator.resetPosition(
+			gyro.getRotation2d(), 
+			swervePositions, 
+			pose);
 	}
 
 	public void resetOdometry(Pose2d pose) {
@@ -248,7 +256,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 		posEstimator.update(gyro.getRotation2d(), swervePositions);
 
-		if (LimelightHelpers.getTV("")) {
+		if (LimelightHelpers.getTV("") && LimelightHelpers.getCurrentPipelineIndex("") == LimelightConstants.kApriltagPipeline) {
 			Pose2d llPose2d = LimelightHelpers.getBotPose2d_wpiRed("");
 			double latency = Units.millisecondsToSeconds(
 					LimelightHelpers.getLatency_Capture("") - LimelightHelpers.getLatency_Pipeline(""));
