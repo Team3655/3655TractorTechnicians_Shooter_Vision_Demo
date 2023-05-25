@@ -27,6 +27,7 @@ import frc.lib.TractorToolbox.JoystickUtils;
 import frc.lib.util.LimelightHelpers;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.ModuleConstants.BackLeftModule;
@@ -196,8 +197,8 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public void driverDrive(double xSpeed, double ySpeed, double rotation, boolean isTurbo, boolean isSneak) {
 		Translation2d translation = new Translation2d(xSpeed, ySpeed);
-		translation = JoystickUtils.curveTranslation2d(translation);
-		rotation = JoystickUtils.curveInput(rotation);
+		translation = JoystickUtils.curveTranslation2d(translation, DriverConstants.KDeadBand);
+		rotation = JoystickUtils.curveInput(rotation, DriverConstants.KDeadBand);
 		drive(translation, rotation, isTurbo, isSneak);
 	}
 
