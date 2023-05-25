@@ -1,23 +1,11 @@
 package frc.lib.TractorToolbox;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants.DriverConstants;
 
 public class JoystickUtils {
-
-	/**
-	 * Applies a deadband to the input value from OperatorConstants
-	 * 
-	 * @param input the value to be constrained
-	 * @return the constrained value
-	 */
-	public static double deadBand(double input) {
-		if (Math.abs(input) < DriverConstants.KDeadBand) {
-			return 0;
-		}
-		return input;
-	}
 
 	/**
 	 * squares the joystick input and uses clever math to compansate for the offset
@@ -29,7 +17,7 @@ public class JoystickUtils {
 	public static double curveInput(double input) {
 
 		// returns zero if input is less than deadband
-		if (deadBand(input) == 0)
+		if (MathUtil.applyDeadband(input, DriverConstants.KDeadBand) == 0)
 			return 0;
 
 		double correctedValue = input;
