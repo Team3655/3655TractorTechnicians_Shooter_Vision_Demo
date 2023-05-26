@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class TeleopDriveCommand extends CommandBase {
@@ -58,7 +57,7 @@ public class TeleopDriveCommand extends CommandBase {
 
 		Translation2d translation = new Translation2d(forward, strafe);
 
-		double speed = translation.getNorm() * DriveConstants.kMaxSpeedMetersPerSecond;
+		double speed = translation.getNorm();
 		Rotation2d angle = translation.getAngle();
 
 		speed = speedLimiter.calculate(speed);
