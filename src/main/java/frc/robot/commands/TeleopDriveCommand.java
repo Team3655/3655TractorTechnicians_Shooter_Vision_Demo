@@ -7,10 +7,10 @@ package frc.robot.commands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.lib.TractorToolbox.JoystickUtils;
+import frc.robot.Constants.DriverConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -22,16 +22,18 @@ public class TeleopDriveCommand extends CommandBase {
 	private DoubleSupplier strafeSupplier;
 	private DoubleSupplier rotationSupplier;
 	private BooleanSupplier isTurboSupplier;
+	private BooleanSupplier isSneakSupplier;
 
-	private SlewRateLimiter speedLimiter;
-	private SlewRateLimiter rotationLimiter;
+	//private SlewRateLimiter speedLimiter;
+	//private SlewRateLimiter rotationLimiter;
 
 	/** Creates a new TeleopDriveCommand. */
 	public TeleopDriveCommand(
 		DoubleSupplier forwardSupplier,
 		DoubleSupplier strafeSupplier,
 		DoubleSupplier rotationSupplier,
-		BooleanSupplier isTurboSupplier) {
+		BooleanSupplier isTurboSupplier,
+		BooleanSupplier isSneakSupplier) {
 
 		// Use addRequirements() here to declare subsystem dependencies.
 		driveSubsystem = RobotContainer.driveSubsystem;
@@ -42,8 +44,8 @@ public class TeleopDriveCommand extends CommandBase {
 		this.rotationSupplier = rotationSupplier;
 		this.isTurboSupplier = isTurboSupplier;
 
-		speedLimiter = new SlewRateLimiter(5);
-		rotationLimiter = new SlewRateLimiter(5);
+		//speedLimiter = new SlewRateLimiter(5);
+		//rotationLimiter = new SlewRateLimiter(5);
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
@@ -54,18 +56,24 @@ public class TeleopDriveCommand extends CommandBase {
 		double strafe = strafeSupplier.getAsDouble();
 		double rotation = rotationSupplier.getAsDouble();
 		boolean isTurbo = isTurboSupplier.getAsBoolean();
+		boolean isSneak = isSneakSupplier.getAsBoolean();
 
 		Translation2d translation = new Translation2d(forward, strafe);
 
-		double speed = translation.getNorm();
-		Rotation2d angle = translation.getAngle();
+		// double speed = translation.getNorm();
+		// Rotation2d angle = translation.getAngle();
 
-		speed = speedLimiter.calculate(speed);
-		rotation = rotationLimiter.calculate(rotation);
+		// Slew limited attempt
+		// speed = speedLimiter.calculate(speed);
+		// rotation = rotationLimiter.calculate(rotation);
 
-		translation = new Translation2d(speed, angle);
+		// translation = new Translation2d(speed, angle);
 
-		driveSubsystem.drive(translation, rotation, isTurbo, false);
+		// Curved input
+		translation = JoystickUtils.curveTranslation2d(translation, DriverConstants.KDeadBand);
+		rotation = JoystickUtils.curveInput(rotation, DriverConstants.KDeadBand);
+
+		driveSubsystem.drive(translation, rotation, isTurbo, isSneak);
 	}
 
 }

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.TractorToolbox.TractorParts.PathBuilder;
 import frc.robot.Constants.DriverConstants;
+import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.commands.TurnCommand;
 import frc.robot.commands.Autonomous.BalanceCommand;
 import frc.robot.commands.Limelight.LLAlignCommand;
@@ -100,16 +101,16 @@ public class RobotContainer {
 		driveJoystick.povDown().whileTrue(
 				new RunCommand(() -> driveSubsystem.robotCentricDrive(-0.05, 0, 0), driveSubsystem));
 
-		// Swerve Drive method is set as default for drive subsystem
+		// Swerve Drive command is set as default for drive subsystem
 		driveSubsystem.setDefaultCommand(
-				new RunCommand(
-						() -> driveSubsystem.driverDrive(
-								-driveJoystick.getY() - programmerController.getLeftY(), // x axis
-								-driveJoystick.getX() - programmerController.getLeftX(), // y axis
-								-turnJoystick.getX() - programmerController.getRightX(), // rot axis
-								driveJoystick.getHID().getRawButton(1) || programmerController.rightBumper().getAsBoolean(), // turbo boolean
-								driveJoystick.getHID().getRawButton(2)), // sneak boolean
-						driveSubsystem));
+				new TeleopDriveCommand(
+						() -> -driveJoystick.getY(),
+						() -> -driveJoystick.getY(),
+						() -> -turnJoystick.getX(),
+						() -> driveJoystick.getHID().getRawButton(1)
+								|| programmerController.rightBumper().getAsBoolean(),
+						() -> driveJoystick.getHID().getRawButton(2)
+								|| programmerController.rightBumper().getAsBoolean()));
 		// endregion
 	}
 
