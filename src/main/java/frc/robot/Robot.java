@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.server.PathPlannerServer;
 
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,6 +36,18 @@ public class Robot extends TimedRobot {
 		// Instantiate our RobotContainer. This will perform all our button bindings,
 		// and put our autonomous chooser on the dashboard.
 
+		DriverStation.silenceJoystickConnectionWarning(true);
+
+		// Starts recording to data log
+		DataLogManager.start();
+
+		// Record Network Tables
+		DataLogManager.logNetworkTables(true);
+
+		// Record both DS control and joystick data
+		DriverStation.startDataLog(DataLogManager.getLog());
+
+		// Portforward limelight for use over USB (I dont think this is currently working -quinn)
 		for (int port = 5800; port <= 5805; port++) {
 			PortForwarder.add(port, "limelight.local", port);
 		}
@@ -42,7 +55,6 @@ public class Robot extends TimedRobot {
 		PathPlannerServer.startServer(5811);
 
 		robotContainer = new RobotContainer();
-		DriverStation.silenceJoystickConnectionWarning(true);
 	}
 
 	/**
@@ -85,7 +97,7 @@ public class Robot extends TimedRobot {
 		if (autonomousCommand != null) {
 			autonomousCommand.schedule();
 		}
-		
+
 	}
 
 	/** This function is called periodically during autonomous. */

@@ -8,6 +8,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.TractorToolbox.JoystickUtils;
 import frc.robot.Constants.DriverConstants;
@@ -43,9 +44,8 @@ public class TeleopDriveCommand extends CommandBase {
 		this.strafeSupplier = strafeSupplier;
 		this.rotationSupplier = rotationSupplier;
 		this.isTurboSupplier = isTurboSupplier;
+		this.isSneakSupplier = isSneakSupplier;
 
-		//speedLimiter = new SlewRateLimiter(5);
-		//rotationLimiter = new SlewRateLimiter(5);
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
@@ -60,18 +60,13 @@ public class TeleopDriveCommand extends CommandBase {
 
 		Translation2d translation = new Translation2d(forward, strafe);
 
-		// double speed = translation.getNorm();
-		// Rotation2d angle = translation.getAngle();
+		SmartDashboard.putNumber("Drive Translation Norm", translation.getNorm());
 
-		// Slew limited attempt
-		// speed = speedLimiter.calculate(speed);
-		// rotation = rotationLimiter.calculate(rotation);
-
-		// translation = new Translation2d(speed, angle);
-
-		// Curved input
+		// Curve input
 		translation = JoystickUtils.curveTranslation2d(translation, DriverConstants.KDeadBand);
 		rotation = JoystickUtils.curveInput(rotation, DriverConstants.KDeadBand);
+
+		SmartDashboard.putNumber("Curved Drive Translation Norm", translation.getNorm());
 
 		driveSubsystem.drive(translation, rotation, isTurbo, isSneak);
 	}

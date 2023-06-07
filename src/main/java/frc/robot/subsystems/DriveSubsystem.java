@@ -113,6 +113,8 @@ public class DriveSubsystem extends SubsystemBase {
 		// This method will be called once per scheduler run
 
 		updateOdometry();
+
+		updateTelemetry();
 	}
 
 	// region getters

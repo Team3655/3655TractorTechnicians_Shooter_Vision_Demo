@@ -104,9 +104,9 @@ public class RobotContainer {
 		// Swerve Drive command is set as default for drive subsystem
 		driveSubsystem.setDefaultCommand(
 				new TeleopDriveCommand(
-						() -> -driveJoystick.getY(),
-						() -> -driveJoystick.getY(),
-						() -> -turnJoystick.getX(),
+						() -> -driveJoystick.getY() -programmerController.getLeftY(),
+						() -> -driveJoystick.getX() -programmerController.getLeftX(),
+						() -> -turnJoystick.getX() -programmerController.getRightX(),
 						() -> driveJoystick.getHID().getRawButton(1)
 								|| programmerController.rightBumper().getAsBoolean(),
 						() -> driveJoystick.getHID().getRawButton(2)
