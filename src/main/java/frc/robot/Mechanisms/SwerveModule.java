@@ -77,8 +77,8 @@ public class SwerveModule {
 		turnMotor.setSmartCurrentLimit(ModuleConstants.kTurnMotorCurrentLimit);
 		// Turn Encoder
 		turnEncoder = turnMotor.getEncoder();
-		turnEncoder.setPositionConversionFactor((2 * Math.PI) * ModuleConstants.kturnGearRatio); // radians
-		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * ModuleConstants.kturnGearRatio * (1d / 60d)); // radians per second
+		turnEncoder.setPositionConversionFactor((2 * Math.PI) * ModuleConstants.kTurnGearRatio); // radians
+		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * ModuleConstants.kTurnGearRatio * (1d / 60d)); // radians per second
 		// Turn PID
 		turnPID = turnMotor.getPIDController();
 		turnPID.setP(angularPIDGains.kP);
@@ -95,10 +95,10 @@ public class SwerveModule {
 		// Leader Drive Encoder
 		driveEncoder = leaderDriveMotor.getEncoder();
 		driveEncoder.setPositionConversionFactor(
-				ModuleConstants.kdriveGearRatio * ModuleConstants.kwheelCircumference); // meters
+				ModuleConstants.kDriveGearRatio * ModuleConstants.kWheelCircumference); // meters
 		driveEncoder.setVelocityConversionFactor(
-				ModuleConstants.kdriveGearRatio
-						* ModuleConstants.kwheelCircumference
+				ModuleConstants.kDriveGearRatio
+						* ModuleConstants.kWheelCircumference
 						* (1d / 60d)); // meters per second
 
 		// Leader Drive PID

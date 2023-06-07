@@ -34,21 +34,21 @@ public final class Constants {
 		public static final int kDriveMotorCurrentLimit = 35;
 
 		// Constants set for the _SDS MK4i_
-		public static final double kdriveGearRatio = 1d / 5.56;
-		public static final double kturnGearRatio = 1d / (150d / 7d);
+		public static final double kTurnGearRatio = 1d / (150d / 7d);
+		public static final double kDriveGearRatio = 1d / 5.56;
 
-		public static final double kwheelCircumference = Units.inchesToMeters(4) * Math.PI;
+		public static final double kWheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
 		// The max speed the modules are capable of
 		public static final double kMaxModuleAccelMetersPerSecond = 4;
 		public static final double kMaxModuleSpeedMetersPerSecond = 5.6;
 
-		public static final double ksVolts = .1;
+		// public static final double ksVolts = .1;
 		public static final double kDriveFeedForward = .2;
 
-		// TODO: Retune feedforward values for turning
-		public static final double kvTurning = .43205;
-		public static final double ksTurning = .17161; // Tuned February 2, 2023
+		// Retune feedforward values for turning
+		// public static final double kvTurning = .43205;
+		// public static final double ksTurning = .17161; // Tuned February 2, 2023
 
 		// gains set for R1 SDS mk4i using dual neo motors
 		public static final PIDGains kModuleDriveGains = new PIDGains(.15, 0.001, 0);
