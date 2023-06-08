@@ -12,6 +12,8 @@ public class SwerveConstants {
 	public final double kMaxModuleAccelMetersPerSecond;
 	public final double kMaxModuleSpeedMetersPerSecond;
 
+	public final double kDriveFeedForward;
+
 	public SwerveConstants(
 			int turnSmartCurrentLimit,
 			int driveSmartCurrentLimit,
@@ -19,7 +21,8 @@ public class SwerveConstants {
 			double driveGearRatio,
 			double wheelCircumference,
 			double maxModuleAccelMetersPerSecond,
-			double maxModuleSpeedMetersPerSecond) {
+			double maxModuleSpeedMetersPerSecond,
+			double driveFeedForward) {
 
 		this.kTurnSmartCurrentLimit = turnSmartCurrentLimit;
 		this.kDriveSmartCurrentLimit = driveSmartCurrentLimit;
@@ -28,5 +31,6 @@ public class SwerveConstants {
 		this.kWheelCircumference = wheelCircumference;
 		this.kMaxModuleAccelMetersPerSecond = maxModuleAccelMetersPerSecond;
 		this.kMaxModuleSpeedMetersPerSecond = maxModuleSpeedMetersPerSecond;
+		this.kDriveFeedForward = driveFeedForward;
 	}
 }

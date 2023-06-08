@@ -34,6 +34,7 @@ import frc.robot.Constants.ModuleConstants.BackLeftModule;
 import frc.robot.Constants.ModuleConstants.BackRightModule;
 import frc.robot.Constants.ModuleConstants.FrontLeftModule;
 import frc.robot.Constants.ModuleConstants.FrontRightModule;
+import frc.robot.Constants.ModuleConstants.GenericModuleConstants;
 import frc.robot.Mechanisms.SwerveModule;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -63,24 +64,28 @@ public class DriveSubsystem extends SubsystemBase {
 		frontLeft = new SwerveModule(
 				"FL",
 				FrontLeftModule.kModuleConstants,
+				GenericModuleConstants.kSwerveConstants,
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains);
 
 		frontRight = new SwerveModule(
 				"FR",
 				FrontRightModule.kModuleConstants,
+				GenericModuleConstants.kSwerveConstants,
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains);
 
 		backLeft = new SwerveModule(
 				"RL",
 				BackLeftModule.kModuleConstants,
+				GenericModuleConstants.kSwerveConstants,
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains);
 
 		backRight = new SwerveModule(
 				"RR",
 				BackRightModule.kModuleConstants,
+				GenericModuleConstants.kSwerveConstants,
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains);
 
@@ -237,7 +242,7 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void setModuleStates(SwerveModuleState[] desiredStates, boolean isTurbo) {
-		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, ModuleConstants.kMaxModuleSpeedMetersPerSecond);
+		SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, GenericModuleConstants.kMaxModuleSpeedMetersPerSecond);
 
 		frontLeft.setDesiredState(desiredStates[0], isTurbo);
 		frontRight.setDesiredState(desiredStates[1], isTurbo);
