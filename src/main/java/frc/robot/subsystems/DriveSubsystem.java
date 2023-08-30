@@ -32,6 +32,8 @@ import frc.robot.Mechanisms.SwerveModule;
 
 public class DriveSubsystem extends SubsystemBase {
 
+	private static DriveSubsystem driveSubsystemInstance = null;
+
 	private boolean useFieldCentric = true;
 
 	private final double pitchOffset;
@@ -53,8 +55,16 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private SwerveDrivePoseEstimator posEstimator;
 
+	public static DriveSubsystem getInstance() {
+
+		if (driveSubsystemInstance == null)
+			driveSubsystemInstance = new DriveSubsystem();
+
+		return driveSubsystemInstance;
+	}
+
 	/** Creates a new DriveSubsystem. */
-	public DriveSubsystem() {
+	private DriveSubsystem() {
 
 		frontLeft = new SwerveModule(
 				"FL",
@@ -93,7 +103,7 @@ public class DriveSubsystem extends SubsystemBase {
 				backRight.getPosition()
 		};
 
-		gyro = new WPI_Pigeon2(DriveConstants.kPigeonPort);
+		gyro = new WPI_Pigeon2(DriveConstants.kPigeonID);
 		gyro.setYaw(0);
 		pitchOffset = gyro.getPitch();
 

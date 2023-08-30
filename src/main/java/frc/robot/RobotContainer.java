@@ -34,9 +34,9 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RobotContainer {
 
 	// The robot's subsystems and commands are defined here...
-	public static final DriveSubsystem driveSubsystem = new DriveSubsystem();
+	private static final DriveSubsystem driveSubsystem = DriveSubsystem.getInstance();
 
-	public final static PathBuilder autoBuilder = new PathBuilder();
+	private static final PathBuilder autoBuilder = new PathBuilder();
 
 	private final CommandJoystick driveJoystick = new CommandJoystick(
 			OperatorConstants.kDriveJoystickPort);

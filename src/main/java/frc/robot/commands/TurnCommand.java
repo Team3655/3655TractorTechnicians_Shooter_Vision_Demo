@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -22,7 +21,7 @@ public class TurnCommand extends CommandBase {
 	/** Creates a new ProfiledTurnCommand. */
 	public TurnCommand(double targetAngleDegrees) {
 
-		driveSubsystem = RobotContainer.driveSubsystem;
+		driveSubsystem = DriveSubsystem.getInstance();
 
 		addRequirements(driveSubsystem);
 

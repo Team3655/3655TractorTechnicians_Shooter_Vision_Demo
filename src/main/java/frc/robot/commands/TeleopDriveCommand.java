@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.TractorToolbox.JoystickUtils;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class TeleopDriveCommand extends CommandBase {
@@ -37,7 +36,7 @@ public class TeleopDriveCommand extends CommandBase {
 		BooleanSupplier isSneakSupplier) {
 
 		// Use addRequirements() here to declare subsystem dependencies.
-		driveSubsystem = RobotContainer.driveSubsystem;
+		driveSubsystem = DriveSubsystem.getInstance();
 		addRequirements(driveSubsystem);
 
 		this.forwardSupplier = forwardSupplier;

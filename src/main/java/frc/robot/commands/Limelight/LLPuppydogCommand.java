@@ -8,11 +8,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
-import frc.robot.Constants.LimelightConstants;
 import frc.lib.TractorToolbox.TractorParts.DoubleSmoother;
 import frc.lib.util.LimelightHelpers;
-import frc.robot.RobotContainer;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class LLPuppydogCommand extends CommandBase {
@@ -28,7 +26,7 @@ public class LLPuppydogCommand extends CommandBase {
 	/** Creates a new LLTargetCommand. */
 	public LLPuppydogCommand() {
 		
-		driveSubsystem = RobotContainer.driveSubsystem;
+		driveSubsystem = DriveSubsystem.getInstance();
 
 		LLTargetpidController = new ProfiledPIDController(
 				LimelightConstants.kLLPuppyTurnGains.kP,

@@ -6,10 +6,8 @@ package frc.robot.commands.Limelight;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
-import frc.robot.Constants.LimelightConstants;
 import frc.lib.util.LimelightHelpers;
-import frc.robot.RobotContainer;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class LLTargetCommand extends CommandBase {
@@ -21,7 +19,7 @@ public class LLTargetCommand extends CommandBase {
 	/** Creates a new LLTargetCommand. */
 	public LLTargetCommand() {
 
-		driveSubsystem = RobotContainer.driveSubsystem;
+		driveSubsystem = DriveSubsystem.getInstance();
 
 		LLTargetpidController = new PIDController(
 				LimelightConstants.kLLTargetGains.kP,

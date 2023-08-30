@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.TractorToolbox.TractorParts.DoubleSmoother;
 import frc.lib.util.LimelightHelpers;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -28,7 +27,7 @@ public class LLAlignCommand extends CommandBase {
 	/** Creates a new LLTargetCommand. */
 	public LLAlignCommand(boolean targetTags) {
 
-		driveSubsystem = RobotContainer.driveSubsystem;
+		driveSubsystem = DriveSubsystem.getInstance();
 
 		this.targetTags = targetTags;
 

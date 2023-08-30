@@ -7,7 +7,6 @@ package frc.robot.commands.Autonomous;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -20,7 +19,7 @@ public class BalanceCommand extends CommandBase {
 	/** Creates a new BalanceCommand. */
 	public BalanceCommand() {
 
-		driveSubsystem = RobotContainer.driveSubsystem;
+		driveSubsystem = DriveSubsystem.getInstance();
 
 		drivePIDController = new ProfiledPIDController(
 				AutoConstants.kBalanceCommandGains.kP,

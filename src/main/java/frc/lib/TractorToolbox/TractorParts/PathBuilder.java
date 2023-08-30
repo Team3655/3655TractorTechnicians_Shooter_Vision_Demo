@@ -14,10 +14,8 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
-
 import frc.robot.Constants.AutoConstants.PathPLannerConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 
 /** Add your docs here. */
@@ -29,7 +27,7 @@ public class PathBuilder {
 	private static HashMap<String, Command> pathMap = new HashMap<>();
 
 	public PathBuilder() {
-		driveSubsystem = RobotContainer.driveSubsystem;
+		driveSubsystem = DriveSubsystem.getInstance();
 
 		autoBuilder = new SwerveAutoBuilder(
 				driveSubsystem::getPoseEstimatorPose2d,

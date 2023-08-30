@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class OdometryCommand extends CommandBase {
@@ -14,7 +13,7 @@ public class OdometryCommand extends CommandBase {
 
 	/** Creates a new OdometryCommand. */
 	public OdometryCommand() {
-		driveSubsystem = RobotContainer.driveSubsystem;
+		driveSubsystem = DriveSubsystem.getInstance();
 		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(driveSubsystem);
 	}

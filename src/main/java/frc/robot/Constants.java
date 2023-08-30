@@ -131,7 +131,7 @@ public final class Constants {
 		// this sets turning speed (keep this low) KsKs
 		public static final double kMaxRPM = 8;
 
-		public static final int kPigeonPort = 2;
+		public static final int kPigeonID = 2;
 
 		public static final double kBumperToBumperWidth = Units.inchesToMeters(31);
 
@@ -192,6 +192,9 @@ public final class Constants {
 		public static final int kTurnJoystickPort = 1;
 		public static final int kOperatorControllerPort = 2;
 		public static final int kProgrammerControllerPort = 3;
+
+		// button bindings 
+		
 
 		public static final double KDeadBand = .1;
 		// this is the number that the joystick input will be raised to

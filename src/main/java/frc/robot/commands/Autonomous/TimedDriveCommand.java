@@ -4,11 +4,10 @@
 
 package frc.robot.commands.Autonomous;
 
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class TimedDriveCommand extends CommandBase {
 
@@ -22,7 +21,7 @@ public class TimedDriveCommand extends CommandBase {
 	/** Creates a new TimedDriveCommand. */
 	public TimedDriveCommand(double xSpeed, double ySpeed, double rotSpeed, double timeMilis) {
 
-		driveSubsystem = RobotContainer.driveSubsystem;
+		driveSubsystem = DriveSubsystem.getInstance();
 
 		this.ySpeed = ySpeed;
 		this.xSpeed = xSpeed;
