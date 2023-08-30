@@ -28,13 +28,11 @@ public final class Constants {
 
 	public static class ModuleConstants {
 
-		public static final boolean kUseThroughBore = false;
-		
-
+		public static final int kMaxRezeroAttempts = 10;
 
 		// gains set for R1 SDS mk4i using dual neo motors
-		public static final PIDGains kModuleDriveGains = new PIDGains(.15, 0.001, 0);
-		public static final PIDGains kModuleTurningGains = new PIDGains(1.5, 0, 0.0016);
+		public static final PIDGains kModuleDriveGains = new PIDGains(.075, 0, 0);
+		public static final PIDGains kModuleTurningGains = new PIDGains(1.5, 0.002, 0.0016);
 
 		public static final class GenericModuleConstants {
 			// Current limits for the wheels
@@ -43,12 +41,12 @@ public final class Constants {
 
 			// Constants set for the _SDS MK4i_
 			public static final double kTurnGearRatio = 1d / (150d / 7d);
-			public static final double kDriveGearRatio = 1d / 5.56;
+			public static final double kDriveGearRatio = 1d / (38250 / 6885);
 			public static final double kWheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
 			// The max speeds the modules are capable of
-			public static final double kMaxModuleAccelMetersPerSecond = 4;
-			public static final double kMaxModuleSpeedMetersPerSecond = 5.6;
+			public static final double kMaxModuleAccelMetersPerSecond = 5;
+			public static final double kMaxModuleSpeedMetersPerSecond = 5.35;
 
 			// Retune feedforward values for turning
 			// public static final double kvTurning = .43205;
@@ -57,25 +55,25 @@ public final class Constants {
 			public static final double kDriveFeedForward = .2;
 
 			public static final SwerveConstants kSwerveConstants = new SwerveConstants(
-				kTurnMotorCurrentLimit, 
-				kDriveMotorCurrentLimit, 
-				kTurnGearRatio, 
-				kDriveGearRatio, 
-				kWheelCircumference, 
-				kMaxModuleAccelMetersPerSecond, 
-				kMaxModuleSpeedMetersPerSecond, 
-				kDriveFeedForward);
+					kTurnMotorCurrentLimit,
+					kDriveMotorCurrentLimit,
+					kTurnGearRatio,
+					kDriveGearRatio,
+					kWheelCircumference,
+					kMaxModuleAccelMetersPerSecond,
+					kMaxModuleSpeedMetersPerSecond,
+					kDriveFeedForward);
 		}
 
 		// module specific constants
 		public static final class FrontLeftModule {
-			public static final int kTurningMotorID = 1;
-			public static final int kLeaderDriveMotorID = 5;
-			public static final int kFollowerDriveMotorID = 9;
-			public static final int kAbsoluteEncoderID = 13;
-			public static final double kAngleOffset = 35.508;
+			public static final int kTurningMotorID = 10;
+			public static final int kLeaderDriveMotorID = 11;
+			public static final int kFollowerDriveMotorID = 12;
+			// public static final int kAbsoluteEncoderID = 9;
+			public static final double kAngleOffset = 0;
 			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
-					kAbsoluteEncoderID,
+					// kAbsoluteEncoderID,
 					kTurningMotorID,
 					kLeaderDriveMotorID,
 					kFollowerDriveMotorID,
@@ -83,13 +81,13 @@ public final class Constants {
 		}
 
 		public static final class FrontRightModule {
-			public static final int kTurningMotorID = 2;
-			public static final int kLeaderDriveMotorID = 6;
-			public static final int kFollowerDriveMotorID = 10;
-			public static final int kAbsoluteEncoderID = 14;
+			public static final int kTurningMotorID = 13;
+			public static final int kLeaderDriveMotorID = 14;
+			public static final int kFollowerDriveMotorID = 15;
+			// public static final int kAbsoluteEncoderID = 10;
 			public static final double kAngleOffset = 0;
 			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
-					kAbsoluteEncoderID,
+					// kAbsoluteEncoderID,
 					kTurningMotorID,
 					kLeaderDriveMotorID,
 					kFollowerDriveMotorID,
@@ -97,13 +95,13 @@ public final class Constants {
 		}
 
 		public static final class BackLeftModule {
-			public static final int kTurningMotorID = 3;
-			public static final int kLeaderDriveMotorID = 7;
-			public static final int kFollowerDriveMotorID = 11;
-			public static final int kAbsoluteEncoderID = 15;
+			public static final int kTurningMotorID = 16;
+			public static final int kLeaderDriveMotorID = 17;
+			public static final int kFollowerDriveMotorID = 18;
+			// public static final int kAbsoluteEncoderID = 11;
 			public static final double kAngleOffset = 0;
 			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
-					kAbsoluteEncoderID,
+					// kAbsoluteEncoderID,
 					kTurningMotorID,
 					kLeaderDriveMotorID,
 					kFollowerDriveMotorID,
@@ -111,13 +109,13 @@ public final class Constants {
 		}
 
 		public static final class BackRightModule {
-			public static final int kTurningMotorID = 4;
-			public static final int kLeaderDriveMotorID = 8;
-			public static final int kFollowerDriveMotorID = 12;
-			public static final int kAbsoluteEncoderID = 16;
+			public static final int kTurningMotorID = 19;
+			public static final int kLeaderDriveMotorID = 20;
+			public static final int kFollowerDriveMotorID = 21;
+			// public static final int kAbsoluteEncoderID = 12;
 			public static final double kAngleOffset = 0;
 			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
-					kAbsoluteEncoderID,
+					// kAbsoluteEncoderID,
 					kTurningMotorID,
 					kLeaderDriveMotorID,
 					kFollowerDriveMotorID,
@@ -128,12 +126,12 @@ public final class Constants {
 	public static class DriveConstants {
 
 		public static final double kMaxSneakMetersPerSecond = 1.0;
-		public static final double kMaxSpeedMetersPerSecond = 5.6;
+		public static final double kMaxSpeedMetersPerSecond = 5.5;
 
-		// this sets turning speed (keep this low)
-		public static final double kMaxRPM = 10;
+		// this sets turning speed (keep this low) KsKs
+		public static final double kMaxRPM = 8;
 
-		public static final int kPigeonPort = 20;
+		public static final int kPigeonPort = 2;
 
 		public static final double kBumperToBumperWidth = Units.inchesToMeters(31);
 
@@ -148,12 +146,6 @@ public final class Constants {
 
 		public static final boolean kGyroReversed = true;
 		public static final boolean kFeildCentric = true;
-		public static final boolean kGyroTuring = false;
-
-		public static final PIDGains kGyroTurningGains = new PIDGains(.025, 0, 0);
-		public static final double kMaxTurningVelocityDegrees = 20;
-		public static final double kMaxTurningAcceleratonDegrees = 10;
-		public static final double kGyroTurnTolerance = 2;
 
 	}
 
@@ -195,7 +187,7 @@ public final class Constants {
 	/**
 	 * The constants pertaining to the drive station
 	 */
-	public static class DriverConstants {
+	public static class OperatorConstants {
 		public static final int kDriveJoystickPort = 0;
 		public static final int kTurnJoystickPort = 1;
 		public static final int kOperatorControllerPort = 2;

@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.TractorToolbox.TractorParts.PathBuilder;
-import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.commands.TurnCommand;
 import frc.robot.commands.Autonomous.BalanceCommand;
@@ -39,13 +39,13 @@ public class RobotContainer {
 	public final static PathBuilder autoBuilder = new PathBuilder();
 
 	private final CommandJoystick driveJoystick = new CommandJoystick(
-			DriverConstants.kDriveJoystickPort);
+			OperatorConstants.kDriveJoystickPort);
 	private final CommandJoystick turnJoystick = new CommandJoystick(
-			DriverConstants.kTurnJoystickPort);
+			OperatorConstants.kTurnJoystickPort);
 	private final CommandGenericHID operatorController = new CommandGenericHID(
-			DriverConstants.kOperatorControllerPort);
+			OperatorConstants.kOperatorControllerPort);
 	private final CommandXboxController programmerController = new CommandXboxController(
-			DriverConstants.kProgrammerControllerPort);
+			OperatorConstants.kProgrammerControllerPort);
 
 	private SendableChooser<Command> autoChooser = new SendableChooser<>();
 

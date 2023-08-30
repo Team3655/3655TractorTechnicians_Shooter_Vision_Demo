@@ -11,7 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.TractorToolbox.JoystickUtils;
-import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -63,8 +63,8 @@ public class TeleopDriveCommand extends CommandBase {
 		SmartDashboard.putNumber("Drive Translation Norm", translation.getNorm());
 
 		// Curve input
-		translation = JoystickUtils.curveTranslation2d(translation, DriverConstants.KDeadBand);
-		rotation = JoystickUtils.curveInput(rotation, DriverConstants.KDeadBand);
+		translation = JoystickUtils.curveTranslation2d(translation, OperatorConstants.KDeadBand);
+		rotation = JoystickUtils.curveInput(rotation, OperatorConstants.KDeadBand);
 
 		SmartDashboard.putNumber("Curved Drive Translation Norm", translation.getNorm());
 
