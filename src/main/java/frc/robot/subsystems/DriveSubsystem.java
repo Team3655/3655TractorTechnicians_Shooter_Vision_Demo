@@ -14,7 +14,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -49,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
 	private final WPI_Pigeon2 gyro;
 
 	// Odeometry class for tracking robot pose
-	private SwerveDriveOdometry odometry;
+	// private SwerveDriveOdometry odometry;
 
 	private Field2d field;
 
@@ -66,6 +65,7 @@ public class DriveSubsystem extends SubsystemBase {
 	/** Creates a new DriveSubsystem. */
 	private DriveSubsystem() {
 
+		// region: def modules
 		frontLeft = new SwerveModule(
 				"FL",
 				FrontLeftModule.kModuleConstants,
@@ -93,6 +93,7 @@ public class DriveSubsystem extends SubsystemBase {
 				GenericModuleConstants.kSwerveConstants,
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains);
+		// endregion
 
 		updateOffsets();
 
@@ -106,11 +107,6 @@ public class DriveSubsystem extends SubsystemBase {
 		gyro = new WPI_Pigeon2(DriveConstants.kPigeonID);
 		gyro.setYaw(0);
 		pitchOffset = gyro.getPitch();
-
-		odometry = new SwerveDriveOdometry(
-				DriveConstants.kDriveKinematics,
-				gyro.getRotation2d(),
-				swervePositions);
 
 		field = new Field2d();
 
@@ -151,10 +147,6 @@ public class DriveSubsystem extends SubsystemBase {
 		return gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
 	}
 
-	public Pose2d getPose() {
-		return odometry.getPoseMeters();
-	}
-
 	public Pose2d getPoseEstimatorPose2d() {
 		return posEstimator.getEstimatedPosition();
 	}
@@ -166,12 +158,6 @@ public class DriveSubsystem extends SubsystemBase {
 				pose);
 	}
 
-	public void resetOdometry(Pose2d pose) {
-		odometry.resetPosition(
-				gyro.getRotation2d(),
-				swervePositions,
-				pose);
-	}
 	// endregion
 
 	// region setter
@@ -250,11 +236,9 @@ public class DriveSubsystem extends SubsystemBase {
 				backRight.getPosition()
 		};
 
-		odometry.update(
-				Rotation2d.fromDegrees(getHeading()),
+		posEstimator.update(
+				Rotation2d.fromDegrees(getHeading()), 
 				swervePositions);
-
-		posEstimator.update(gyro.getRotation2d(), swervePositions);
 
 		// if (LimelightHelpers.getTV("")
 		// 		&& LimelightHelpers.getCurrentPipelineIndex("") == LimelightConstants.kApriltagPipeline) {
@@ -267,7 +251,7 @@ public class DriveSubsystem extends SubsystemBase {
 		// 			timeStamp);
 		// }
 
-		field.setRobotPose(odometry.getPoseMeters());
+		field.setRobotPose(posEstimator.getEstimatedPosition());
 	}
 
 	public void zeroHeading() {
@@ -312,9 +296,9 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Gyro roll", gyro.getRoll());
 
 		SmartDashboard.putData("field", field);
-		SmartDashboard.putNumber("2D Gyro", odometry.getPoseMeters().getRotation().getDegrees());
-		SmartDashboard.putNumber("2D X", getPose().getX());
-		SmartDashboard.putNumber("2D Y", getPose().getY());
+		SmartDashboard.putNumber("2D Gyro", posEstimator.getEstimatedPosition().getRotation().getDegrees());
+		SmartDashboard.putNumber("2D X", getPoseEstimatorPose2d().getX());
+		SmartDashboard.putNumber("2D Y", getPoseEstimatorPose2d().getY());
 	}
 
 	// endregion
