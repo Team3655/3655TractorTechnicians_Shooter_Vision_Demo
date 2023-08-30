@@ -58,7 +58,7 @@ public class SwerveModule {
 		this.swerveConstants = swerveConstants;
 		this.moduleName = moduleName;
 		this.angleZeroOffset = moduleConstants.kAngleZeroOffset;
-		optimizedState = new SwerveModuleState();
+		// optimizedState = new SwerveModuleState();
 
 		// // Initalize CANcoder
 		// absoluteEncoder = new CANCoder(moduleConstants.kCANCoderID,
@@ -186,8 +186,6 @@ public class SwerveModule {
 
 		if (isTurbo) {
 			// Squeeze every last bit if power out of turbo
-			// leaderDriveMotor.setVoltage(12 *
-			// Math.signum(optimizedState.speedMetersPerSecond));
 			double turboSpeed = Math.copySign(
 					swerveConstants.kMaxModuleSpeedMetersPerSecond,
 					optimizedState.speedMetersPerSecond);

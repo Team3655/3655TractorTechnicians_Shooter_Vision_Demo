@@ -48,11 +48,9 @@ public class DriveSubsystem extends SubsystemBase {
 	private final WPI_Pigeon2 gyro;
 
 	// Odeometry class for tracking robot pose
-	// private SwerveDriveOdometry odometry;
+	private SwerveDrivePoseEstimator posEstimator;
 
 	private Field2d field;
-
-	private SwerveDrivePoseEstimator posEstimator;
 
 	public static DriveSubsystem getInstance() {
 
