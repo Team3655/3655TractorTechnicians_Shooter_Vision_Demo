@@ -10,12 +10,12 @@ import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -63,6 +63,8 @@ public class DriveSubsystem extends SubsystemBase {
 	/** Creates a new DriveSubsystem. */
 	private DriveSubsystem() {
 
+		Timer.delay(5);
+
 		// region: def modules
 		frontLeft = new SwerveModule(
 				"FL",
@@ -93,7 +95,6 @@ public class DriveSubsystem extends SubsystemBase {
 				ModuleConstants.kModuleDriveGains);
 		// endregion
 
-		updateOffsets();
 
 		swervePositions = new SwerveModulePosition[] {
 				frontLeft.getPosition(),
@@ -234,19 +235,19 @@ public class DriveSubsystem extends SubsystemBase {
 				backRight.getPosition()
 		};
 
-		posEstimator.update(
-				Rotation2d.fromDegrees(getHeading()), 
-				swervePositions);
+		posEstimator.update(gyro.getRotation2d(), swervePositions);
 
 		// if (LimelightHelpers.getTV("")
-		// 		&& LimelightHelpers.getCurrentPipelineIndex("") == LimelightConstants.kApriltagPipeline) {
-		// 	Pose2d llPose2d = LimelightHelpers.getBotPose2d_wpiRed("");
-		// 	double latency = Units.millisecondsToSeconds(
-		// 			LimelightHelpers.getLatency_Capture("") - LimelightHelpers.getLatency_Pipeline(""));
-		// 	double timeStamp = Timer.getFPGATimestamp() - latency;
-		// 	posEstimator.addVisionMeasurement(
-		// 			llPose2d,
-		// 			timeStamp);
+		// && LimelightHelpers.getCurrentPipelineIndex("") ==
+		// LimelightConstants.kApriltagPipeline) {
+		// Pose2d llPose2d = LimelightHelpers.getBotPose2d_wpiRed("");
+		// double latency = Units.millisecondsToSeconds(
+		// LimelightHelpers.getLatency_Capture("") -
+		// LimelightHelpers.getLatency_Pipeline(""));
+		// double timeStamp = Timer.getFPGATimestamp() - latency;
+		// posEstimator.addVisionMeasurement(
+		// llPose2d,
+		// timeStamp);
 		// }
 
 		field.setRobotPose(posEstimator.getEstimatedPosition());
@@ -275,13 +276,6 @@ public class DriveSubsystem extends SubsystemBase {
 		backRight.stopMotors();
 	}
 
-	public void updateOffsets() {
-		frontLeft.attemptAgnleOffset();
-		frontRight.attemptAgnleOffset();
-		backLeft.attemptAgnleOffset();
-		backRight.attemptAgnleOffset();
-	}
-
 	public void updateTelemetry() {
 		frontLeft.updateTelemetry();
 		frontRight.updateTelemetry();
@@ -294,9 +288,6 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Gyro roll", gyro.getRoll());
 
 		SmartDashboard.putData("field", field);
-		SmartDashboard.putNumber("2D Gyro", posEstimator.getEstimatedPosition().getRotation().getDegrees());
-		SmartDashboard.putNumber("2D X", getPoseEstimatorPose2d().getX());
-		SmartDashboard.putNumber("2D Y", getPoseEstimatorPose2d().getY());
 	}
 
 	// endregion
