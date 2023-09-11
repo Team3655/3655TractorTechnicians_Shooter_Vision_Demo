@@ -58,7 +58,7 @@ public class SwerveModule {
 		this.swerveConstants = swerveConstants;
 		this.moduleName = moduleName;
 		this.angleZeroOffset = moduleConstants.kAngleZeroOffset;
-		// optimizedState = new SwerveModuleState();
+		optimizedState = new SwerveModuleState();
 
 		// // Initalize CANcoder
 		// absoluteEncoder = new CANCoder(moduleConstants.kCANCoderID,
