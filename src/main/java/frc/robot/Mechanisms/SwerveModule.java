@@ -18,7 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.lib.TractorToolbox.SparkMaxMaker;
+import frc.lib.TractorToolbox.SparkMaxUtils;
 import frc.lib.TractorToolbox.TractorParts.PIDGains;
 import frc.lib.TractorToolbox.TractorParts.SwerveConstants;
 import frc.lib.TractorToolbox.TractorParts.SwerveModuleConstants;
@@ -28,8 +28,6 @@ public class SwerveModule {
 	private final CANSparkMax turnMotor;
 	private final CANSparkMax leaderDriveMotor;
 	private final CANSparkMax followerDriveMotor;
-
-	// private final CANCoder absoluteEncoder;
 
 	private final RelativeEncoder driveEncoder;
 	private final RelativeEncoder turnEncoder;
@@ -62,16 +60,17 @@ public class SwerveModule {
 		// Initialize the motors
 		// Initialize turning motor, encoder, and PID
 		// Turn Motor
-		turnMotor = SparkMaxMaker.createSparkMax(moduleConstants.kTurnMotorID);
+		turnMotor = SparkMaxUtils.createSparkMax(
+				moduleConstants.kTurnMotorID,
+				swerveConstants.kTurnSmartCurrentLimit,
+				IdleMode.kCoast);
 		turnMotor.setInverted(true);
-		turnMotor.setIdleMode(IdleMode.kCoast);
-		turnMotor.setSmartCurrentLimit(swerveConstants.kTurnSmartCurrentLimit);
 		// Turn Encoder
-		turnEncoder = turnMotor.getEncoder();
-		// radians
-		turnEncoder.setPositionConversionFactor((2 * Math.PI) * swerveConstants.kTurnGearRatio); 
-		// radians per second
-		turnEncoder.setVelocityConversionFactor((2 * Math.PI) * swerveConstants.kTurnGearRatio * (1d / 60d));
+		turnEncoder = SparkMaxUtils.createEncoder(
+				turnMotor,
+				2 * Math.PI, // radians
+				swerveConstants.kTurnGearRatio);
+
 		// Turn PID
 		turnPID = turnMotor.getPIDController();
 		turnPID.setP(kmoduleturninggains.kP);
@@ -82,17 +81,25 @@ public class SwerveModule {
 		turnPID.setPositionPIDWrappingMaxInput(2 * Math.PI);
 
 		// Leader Drive Motor
-		leaderDriveMotor = SparkMaxMaker.createSparkMax(moduleConstants.kLeaderDriveMotorID);
-		leaderDriveMotor.setIdleMode(IdleMode.kBrake);
-		leaderDriveMotor.setSmartCurrentLimit(swerveConstants.kDriveSmartCurrentLimit);
+		leaderDriveMotor = SparkMaxUtils.createSparkMax(
+				moduleConstants.kLeaderDriveMotorID,
+				swerveConstants.kDriveSmartCurrentLimit,
+				IdleMode.kBrake);
 		// Leader Drive Encoder
-		driveEncoder = leaderDriveMotor.getEncoder();
-		driveEncoder.setPositionConversionFactor(
-				swerveConstants.kDriveGearRatio * swerveConstants.kWheelCircumference); // meters
-		driveEncoder.setVelocityConversionFactor(
-				swerveConstants.kDriveGearRatio
-						* swerveConstants.kWheelCircumference
-						* (1d / 60d)); // meters per second
+		driveEncoder = SparkMaxUtils.createEncoder(
+				leaderDriveMotor,
+				swerveConstants.kWheelCircumference,
+				swerveConstants.kDriveGearRatio);
+
+		// Follower Drive Motor
+		followerDriveMotor = SparkMaxUtils.createSparkMax(
+				moduleConstants.kFolloweDriveMotorID,
+				swerveConstants.kDriveSmartCurrentLimit,
+				IdleMode.kBrake);
+
+		// Set the followerDriveMotor to follow the drive but inverted because the motor
+		// has been flipped
+		followerDriveMotor.follow(leaderDriveMotor, true);
 
 		// Leader Drive PID
 		drivePID = leaderDriveMotor.getPIDController();
@@ -103,11 +110,6 @@ public class SwerveModule {
 		drivePID.setSmartMotionMaxAccel(swerveConstants.kMaxModuleAccelMetersPerSecond, 0);
 		drivePID.setSmartMotionMaxVelocity(swerveConstants.kMaxModuleSpeedMetersPerSecond, 0);
 		drivePID.setFF(swerveConstants.kDriveFeedForward);
-
-		// Follower Drive Motor
-		followerDriveMotor = SparkMaxMaker.createSparkMax(moduleConstants.kFolloweDriveMotorID);
-		followerDriveMotor.follow(leaderDriveMotor, true);
-		followerDriveMotor.setSmartCurrentLimit(swerveConstants.kDriveSmartCurrentLimit);
 
 		// Absolute encoder
 		throughBore = turnMotor.getAbsoluteEncoder(Type.kDutyCycle);
@@ -124,20 +126,23 @@ public class SwerveModule {
 	// region: getters
 
 	/**
-	 * returns the current heading of the module from the absolute encoder in
-	 * radians
+	 * @return the current heading of the module from the absolute encoder in
+	 *         radians
 	 */
 	public double getAbsoluteHeading() {
 		return throughBore.getPosition() - angleZeroOffset;
 	}
 
+	/**
+	 * @return the position of the drive encoder
+	 */
 	public double getDistanceMeters() {
 		return driveEncoder.getPosition();
 	}
 
 	/**
-	 * returns the error from the current angle to optimized angle of the module in
-	 * radians
+	 * @return returns the error from the current angle to the optimized angle of
+	 *         the module in radians
 	 */
 	public double getAngleError() {
 		return optimizedState.angle.getRadians() - getAbsoluteHeading();
@@ -153,10 +158,25 @@ public class SwerveModule {
 	// endregion: getters
 
 	// region: Setters
+
+	/**
+	 * Calls setDesiredState(SwerveModuleState desiredState, boolean isTurbo)
+	 * assuming isTurbo is false (this is really only used for PathPlanner)
+	 * 
+	 * @param desiredState the desired SwerveModuleState of the module
+	 */
 	public void setDesiredState(SwerveModuleState desiredState) {
 		setDesiredState(desiredState, false);
 	}
 
+	/**
+	 * Sets the desired state of the module for driving, this sets the modules
+	 * target angle and speed
+	 * 
+	 * @param desiredState the desired SwerveModuleState of the module
+	 * @param isTurbo      if this is true the module will set the full
+	 *                     kMaxModuleSpeedMetersPerSecond as the target drive speed
+	 */
 	public void setDesiredState(SwerveModuleState desiredState, boolean isTurbo) {
 
 		SwerveModuleState correctedDesiredState = new SwerveModuleState();
@@ -174,26 +194,18 @@ public class SwerveModule {
 		}
 
 		if (isTurbo) {
-			double turboSpeed = Math.copySign(
+			optimizedState.speedMetersPerSecond = Math.copySign(
 					swerveConstants.kMaxModuleSpeedMetersPerSecond,
 					optimizedState.speedMetersPerSecond);
-
-			drivePID.setReference(turboSpeed, ControlType.kSmartVelocity);
-		} else {
-			drivePID.setReference(
-					optimizedState.speedMetersPerSecond,
-					ControlType.kSmartVelocity);
 		}
+
+		drivePID.setReference(
+				optimizedState.speedMetersPerSecond,
+				ControlType.kSmartVelocity);
 
 		turnPID.setReference(
 				optimizedState.angle.getRadians(),
 				ControlType.kPosition);
-
-	}
-
-	public void stopMotors() {
-		leaderDriveMotor.stopMotor();
-		turnMotor.stopMotor();
 	}
 
 	public void setAngleOffset() {
@@ -201,15 +213,15 @@ public class SwerveModule {
 	}
 
 	public void updateTelemetry() {
-		SmartDashboard.putNumber(moduleName + " Angle Error", Units.radiansToDegrees(getAngleError()));
 		SmartDashboard.putNumber(moduleName + " Offset", angleZeroOffset);
-		SmartDashboard.putNumber(moduleName + " Drive Current Draw", leaderDriveMotor.getOutputCurrent());
 		SmartDashboard.putNumber(moduleName + " Optimized Angle", optimizedState.angle.getDegrees());
-		SmartDashboard.putNumber(moduleName + " Turn Motor Output", turnMotor.getAppliedOutput());
 		SmartDashboard.putNumber(moduleName + " Target Velocity", optimizedState.speedMetersPerSecond);
-		SmartDashboard.putNumber(moduleName + " Velocity", driveEncoder.getVelocity());
-		SmartDashboard.putNumber(moduleName + " Turn Velocity", turnEncoder.getVelocity());
 		SmartDashboard.putNumber(moduleName + " Absolute Angle", Units.radiansToDegrees(getAbsoluteHeading()));
+		SmartDashboard.putNumber(moduleName + " Angle Error", Units.radiansToDegrees(getAngleError()));
+
+		SparkMaxUtils.sendMoterTelemetry(moduleName + "Turn Motor", turnMotor);
+		SparkMaxUtils.sendMoterTelemetry(moduleName + " Leader Drive Motor", leaderDriveMotor);
+		SparkMaxUtils.sendMoterTelemetry(moduleName + " Follower Drive Motor", followerDriveMotor);
 	}
 
 	// endregion: setters

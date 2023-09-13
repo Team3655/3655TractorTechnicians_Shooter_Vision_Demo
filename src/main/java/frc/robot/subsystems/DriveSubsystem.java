@@ -15,12 +15,15 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.ModuleConstants.BackLeftModule;
 import frc.robot.Constants.ModuleConstants.BackRightModule;
@@ -94,7 +97,6 @@ public class DriveSubsystem extends SubsystemBase {
 				ModuleConstants.kModuleTurningGains,
 				ModuleConstants.kModuleDriveGains);
 		// endregion
-
 
 		swervePositions = new SwerveModulePosition[] {
 				frontLeft.getPosition(),
@@ -237,20 +239,20 @@ public class DriveSubsystem extends SubsystemBase {
 
 		posEstimator.update(gyro.getRotation2d(), swervePositions);
 
-		// if (LimelightHelpers.getTV("")
-		// && LimelightHelpers.getCurrentPipelineIndex("") ==
-		// LimelightConstants.kApriltagPipeline) {
-		// Pose2d llPose2d = LimelightHelpers.getBotPose2d_wpiRed("");
-		// double latency = Units.millisecondsToSeconds(
-		// LimelightHelpers.getLatency_Capture("") -
-		// LimelightHelpers.getLatency_Pipeline(""));
-		// double timeStamp = Timer.getFPGATimestamp() - latency;
-		// posEstimator.addVisionMeasurement(
-		// llPose2d,
-		// timeStamp);
-		// }
-
 		field.setRobotPose(posEstimator.getEstimatedPosition());
+	}
+
+	public void addVisionMeasurement() {
+		if (LimelightHelpers.getTV("")
+				&& LimelightHelpers.getCurrentPipelineIndex("") == LimelightConstants.kApriltagPipeline) {
+			Pose2d llPose2d = LimelightHelpers.getBotPose2d_wpiRed("");
+			double latency = Units.millisecondsToSeconds(
+					LimelightHelpers.getLatency_Capture("") -
+							LimelightHelpers.getLatency_Pipeline(""));
+			double timeStamp = Timer.getFPGATimestamp() - latency;
+
+			posEstimator.addVisionMeasurement(llPose2d, timeStamp);
+		}
 	}
 
 	public void zeroHeading() {
@@ -267,13 +269,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public InstantCommand toggleFieldCentric() {
 		return new InstantCommand(() -> setFieldCentric(!useFieldCentric));
-	}
-
-	public void stopMotors() {
-		frontLeft.stopMotors();
-		frontRight.stopMotors();
-		backLeft.stopMotors();
-		backRight.stopMotors();
 	}
 
 	public void updateTelemetry() {
