@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.TractorToolbox.SparkMaxUtils;
 import frc.lib.TractorToolbox.TractorParts.PIDGains;
@@ -120,6 +121,7 @@ public class SwerveModule {
 		followerDriveMotor.burnFlash();
 		turnMotor.burnFlash();
 
+		Timer.delay(0.25);
 		turnPID.setFeedbackDevice(throughBore);
 	}
 
