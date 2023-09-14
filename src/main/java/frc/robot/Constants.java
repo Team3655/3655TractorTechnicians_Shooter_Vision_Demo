@@ -71,7 +71,7 @@ public final class Constants {
 			public static final int kLeaderDriveMotorID = 11;
 			public static final int kFollowerDriveMotorID = 12;
 			// public static final int kAbsoluteEncoderID = 9;
-			public static final double kAngleOffset = 0;
+			public static final double kAngleOffset = 26.3367;
 			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
 					// kAbsoluteEncoderID,
 					kTurningMotorID,
@@ -85,7 +85,7 @@ public final class Constants {
 			public static final int kLeaderDriveMotorID = 14;
 			public static final int kFollowerDriveMotorID = 15;
 			// public static final int kAbsoluteEncoderID = 10;
-			public static final double kAngleOffset = 0;
+			public static final double kAngleOffset = 310.4834;
 			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
 					// kAbsoluteEncoderID,
 					kTurningMotorID,
@@ -99,7 +99,7 @@ public final class Constants {
 			public static final int kLeaderDriveMotorID = 17;
 			public static final int kFollowerDriveMotorID = 18;
 			// public static final int kAbsoluteEncoderID = 11;
-			public static final double kAngleOffset = 0;
+			public static final double kAngleOffset = 31.5678;
 			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
 					// kAbsoluteEncoderID,
 					kTurningMotorID,
@@ -113,7 +113,7 @@ public final class Constants {
 			public static final int kLeaderDriveMotorID = 20;
 			public static final int kFollowerDriveMotorID = 21;
 			// public static final int kAbsoluteEncoderID = 12;
-			public static final double kAngleOffset = 0;
+			public static final double kAngleOffset = 43.5073;
 			public static final SwerveModuleConstants kModuleConstants = new SwerveModuleConstants(
 					// kAbsoluteEncoderID,
 					kTurningMotorID,
