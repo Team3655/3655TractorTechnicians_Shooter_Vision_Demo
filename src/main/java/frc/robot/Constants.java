@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
 import com.revrobotics.CANSparkMax.IdleMode;
 
 /**
@@ -47,7 +49,17 @@ public final class Constants {
 		public static final double kFlywheel1P = 0.1;
 		public static final double kFlywheel1I = 0.0;
 		public static final double kFlywheel1D = 0.0;
-		
+
+		// assosciate a distance in meters with a speed for the shooter
+		public static final HashMap<Double, Double> kDistanceToSpeedMap = new HashMap<Double, Double>() {
+			{
+				put(0d, 0d);
+				put(1d, 5d);
+				put(1.5, 8d);
+				put(2d, 12d);
+			}
+		};
+
 	}
 
 	/**

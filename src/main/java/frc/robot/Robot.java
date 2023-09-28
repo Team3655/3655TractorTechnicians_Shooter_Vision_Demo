@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.server.PathPlannerServer;
-
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -33,8 +31,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-		// Instantiate our RobotContainer. This will perform all our button bindings,
-		// and put our autonomous chooser on the dashboard.
 
 		DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -52,8 +48,8 @@ public class Robot extends TimedRobot {
 			PortForwarder.add(port, "limelight.local", port);
 		}
 
-		PathPlannerServer.startServer(5811);
-
+		// Instantiate our RobotContainer. This will perform all our button bindings,
+		// and put our autonomous chooser on the dashboard.
 		robotContainer = new RobotContainer();
 	}
 

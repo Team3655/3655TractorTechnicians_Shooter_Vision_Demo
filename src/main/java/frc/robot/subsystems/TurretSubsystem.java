@@ -8,9 +8,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TurretSubsystem extends SubsystemBase {
 
-	/** Creates a new TurretSubsystem. */
-	public TurretSubsystem() {
+	private static TurretSubsystem subsystem;
 
+	/** Creates a new TurretSubsystem. */
+	private TurretSubsystem() {
+
+	}
+
+	public static TurretSubsystem getInstance() {
+		if (subsystem == null)
+			subsystem = new TurretSubsystem();
+		return subsystem;
 	}
 
 	@Override
