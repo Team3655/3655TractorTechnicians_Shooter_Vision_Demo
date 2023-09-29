@@ -46,22 +46,25 @@ public class ShooterSubsystem extends SubsystemBase {
 
 	public void setVelocityFromDistance(double distanceToTarget) {
 
-		double minGreater = Double.NEGATIVE_INFINITY;
-		double maxLesser = Double.POSITIVE_INFINITY;
+		double minAbove = Double.NEGATIVE_INFINITY;
+		double maxBelow = Double.POSITIVE_INFINITY;
 
 		for (double distKey : distanceToSpeedMap.keySet()) {
-			if (distKey > distanceToTarget && distKey < minGreater)
-				minGreater = distKey;
+			if (distKey > distanceToTarget && distKey < minAbove)
+				minAbove = distKey;
 
-			if (distKey < distanceToTarget && distKey > maxLesser)
-				maxLesser = distKey;
+			if (distKey < distanceToTarget && distKey > maxBelow)
+				maxBelow = distKey;
 		}
 
-		double lerpPercentage = (distanceToTarget - maxLesser) / (minGreater - maxLesser);
+		double lerpPercentage = (distanceToTarget - maxBelow) / (minAbove - maxBelow);
 
-		double fromSpeed;
+		double fromSpeed = distanceToSpeedMap.get(maxBelow);
+		double toSpeed = distanceToSpeedMap.get(minAbove);
 
-		// setVelocity(distanceMeters);
+		double velocityFromDistance = fromSpeed + ((toSpeed - fromSpeed) * lerpPercentage);
+
+		setVelocity(velocityFromDistance);
 	}
 
 	public void setVelocity(double velocity) {
