@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import java.util.HashMap;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.TractorToolbox.SparkMaxUtils;
 import frc.robot.Constants.ShooterConstants;
@@ -15,9 +18,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
 	private static ShooterSubsystem subsystem;
 
+	private final HashMap<Double, Double> distanceToSpeedMap;
+
 	private final Flywheel flywheel1;
 
-	private final HashMap<Double, Double> distanceToSpeedMap;
+	private final CANSparkMax kicker;
 
 	// private constructor to force use of getInstance() to create the Subsystem
 	// object following the Singleton Design Pattern
@@ -36,6 +41,8 @@ public class ShooterSubsystem extends SubsystemBase {
 				ShooterConstants.kFlywheel1D);
 
 		distanceToSpeedMap = ShooterConstants.kDistanceToSpeedMap;
+
+		kicker = new CANSparkMax(ShooterConstants.kKickerMotorID, MotorType.kBrushless);
 	}
 
 	public static ShooterSubsystem getInstance() {
@@ -107,6 +114,14 @@ public class ShooterSubsystem extends SubsystemBase {
 	public void setVelocityFromDistance(double distanceToTarget) {
 		double velocity = getVelocityFromDistance(distanceToTarget);
 		flywheel1.setVelocity(velocity);
+	}
+
+	public void shoot() {
+		kicker.set(1);
+	}
+
+	public void stopShooting() {
+		kicker.set(0);
 	}
 
 	@Override

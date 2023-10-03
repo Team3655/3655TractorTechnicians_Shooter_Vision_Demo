@@ -76,7 +76,12 @@ public final class Constants {
 		public static final double kTurretD = 0.0;
 
 		public static final double kForwardLimit = 180;
-		public static final double kReverseLimit = -180;
+		public static final double kReverseLimit = -180;	
+
+		public static enum TurretStates {
+			kSearching,
+			kTargetGoal
+		}
 	}
 
 	/**
