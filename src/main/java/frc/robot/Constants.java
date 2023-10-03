@@ -35,7 +35,8 @@ public final class Constants {
 
 	public static class ShooterConstants {
 
-		public static final int kFlywheel1MotorID = 1;
+		public static final int kFlywheel1MotorID = 10;
+		public static final int kKickerMotorID = 11;
 
 		public static final int kFlywheel1SmartCurrentLimit = 10;
 
@@ -60,6 +61,22 @@ public final class Constants {
 			}
 		};
 
+	}
+
+	public static class TurretConstants {
+
+		public static final int kTurretMotorID = 20;
+
+		public static final int kTurretSmartCurrentLimit = 5;
+
+		public static final double kTurretGearRatio = 1 / 2;
+
+		public static final double kTurretP = 0.1;
+		public static final double kTurretI = 0.0;
+		public static final double kTurretD = 0.0;
+
+		public static final double kForwardLimit = 180;
+		public static final double kReverseLimit = -180;
 	}
 
 	/**

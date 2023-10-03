@@ -44,30 +44,68 @@ public class ShooterSubsystem extends SubsystemBase {
 		return subsystem;
 	}
 
-	public void setVelocityFromDistance(double distanceToTarget) {
+	/**
+	 * Takes a distance from the target to the robot as an input. Then interpolates
+	 * between the shooter velocities directly above and below the distance in a
+	 * HashMap, to get the optimal speed for shooting based on a distance
+	 * 
+	 * @param distanceToTarget
+	 */
+	public double getVelocityFromDistance(double distanceToTarget) {
 
+		// minAbove and minBelow are the closest distance values above and below the
+		// distanceToTarget in the HashMap. (i.e. if you have a distance of 4.5 and a
+		// map associating the values {5=20, 4=10, 3=30} then maxBelow would be 5 and
+		// minAbove would be 4)
+		// Setting these to negetive and positive infinity guarentees any value in the
+		// map will be greater or lesser and therefore they will always immeditly recive
+		// a value from the map
 		double minAbove = Double.NEGATIVE_INFINITY;
+		double maximum = Double.NEGATIVE_INFINITY;
 		double maxBelow = Double.POSITIVE_INFINITY;
+		double minimum = Double.POSITIVE_INFINITY;
 
+		// finding the minAbove and minBelow values
 		for (double distKey : distanceToSpeedMap.keySet()) {
 			if (distKey > distanceToTarget && distKey < minAbove)
 				minAbove = distKey;
 
+			if (distKey >= maximum)
+				maximum = distKey;
+
 			if (distKey < distanceToTarget && distKey > maxBelow)
 				maxBelow = distKey;
+
+			if (distKey <= minimum)
+				minimum = distKey;
 		}
 
+		if (minAbove == Double.NEGATIVE_INFINITY) 
+			return distanceToSpeedMap.get(maximum);
+
+		else if (maxBelow == Double.POSITIVE_INFINITY)
+			return distanceToSpeedMap.get(minimum);
+
+		// finds the progress from minAbove to minBelow as a percentage to be used in
+		// interpolating shooter speeds
 		double lerpPercentage = (distanceToTarget - maxBelow) / (minAbove - maxBelow);
 
+		// gets the speeds associated with the minAbove and minBelow distance
 		double fromSpeed = distanceToSpeedMap.get(maxBelow);
 		double toSpeed = distanceToSpeedMap.get(minAbove);
 
-		double velocityFromDistance = fromSpeed + ((toSpeed - fromSpeed) * lerpPercentage);
+		// interpolates between the two speeds using all the values calculated before
+		double lerpedVelocity = fromSpeed + ((toSpeed - fromSpeed) * lerpPercentage);
 
-		setVelocity(velocityFromDistance);
+		return lerpedVelocity;
 	}
 
 	public void setVelocity(double velocity) {
+		flywheel1.setVelocity(velocity);
+	}
+
+	public void setVelocityFromDistance(double distanceToTarget) {
+		double velocity = getVelocityFromDistance(distanceToTarget);
 		flywheel1.setVelocity(velocity);
 	}
 
