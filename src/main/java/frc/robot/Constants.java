@@ -51,6 +51,8 @@ public final class Constants {
 		public static final double kFlywheel1I = 0.0;
 		public static final double kFlywheel1D = 0.0;
 
+
+		public static final double kShooterIdleSpeed = 1;
 		// assosciate a distance in meters with a speed for the shooter
 		public static final HashMap<Double, Double> kDistanceToSpeedMap = new HashMap<Double, Double>() {
 			{
@@ -77,6 +79,8 @@ public final class Constants {
 
 		public static final double kForwardLimit = 180;
 		public static final double kReverseLimit = -180;	
+
+		public static final double kTargetCommandDeadband = 2;
 
 		public static enum TurretStates {
 			kSearching,

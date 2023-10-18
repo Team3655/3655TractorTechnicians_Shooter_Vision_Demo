@@ -59,7 +59,8 @@ public class TurretSubsystem extends SubsystemBase {
 	}
 
 	public void updateTargetFromVisionError(double visionError) {
-		targetAngle = turretEncoder.getPosition() - visionError;
+		double updatedTarget = turretEncoder.getPosition() - visionError;
+		targetAngle = optimize(updatedTarget);
 	}
 
 	/**
@@ -94,4 +95,14 @@ public class TurretSubsystem extends SubsystemBase {
 		return angle;
 	}
 
+	public boolean getAtTarget(double deadband) {
+
+		double errorToTarget = Math.abs(turretEncoder.getPosition() - targetAngle);
+
+		if (Math.abs(errorToTarget) < deadband) {
+			return true;
+		}
+
+		return false;
+	}
 }
